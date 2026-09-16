@@ -2738,3 +2738,155 @@ Output:
 (no output)
 
 --------------------------------------------------------
+
+Atlas atlas-104b3m-shard-0 [primary] PCEA24CY020> db.products.updateOne(
+|   { productId: 20 },
+|   { $push: { tags: "discount" } }
+| )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+Atlas atlas-104b3m-shard-0 [primary] PCEA24CY020> db.products.find(
+|   { productId: 20 },
+|   { _id: 0, productId: 1, tags: 1 }
+| )
+[
+  {
+    productId: 20,
+    tags: [ 'electronics', 'featured', 'sale', 'discount' ]
+  }
+]
+
+--------------------------------------------------------
+
+Atlas atlas-104b3m-shard-0 [primary] PCEA24CY020> db.products.updateOne(
+|   { productId: 20 },
+|   {
+|     $set: {
+|       price: 18000,
+|       inStock: true
+|     },
+|     $inc: {
+|       stock: 10
+|     },
+|     $push: {
+|       tags: "offer"
+|     }
+|   }
+| )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+Atlas atlas-104b3m-shard-0 [primary] PCEA24CY020> db.products.find({ productId: 20 })
+[
+  {
+    _id: ObjectId('6aa8fcde17afcbc60fe02c42'),
+    productId: 20,
+    productName: 'Product 20',
+    category: 'Laptop',
+    brand: 'HP',
+    price: 18000,
+    stock: 80,
+    inStock: true,
+    tags: [ 'electronics', 'featured', 'sale', 'discount', 'offer' ],
+    seller: { sellerId: 1020, sellerName: 'Seller 20' },
+    createdAt: ISODate('2026-09-15T08:07:58.784Z')
+  }
+]
+
+--------------------------------------------------------
+
+Atlas atlas-104b3m-shard-0 [primary] PCEA24CY020> db.products.insertOne({
+|   productId: 999,
+|   productName: "Replace Test",
+|   category: "Test",
+|   brand: "TestBrand",
+|   price: 1000,
+|   stock: 5
+| })
+{
+  acknowledged: true,
+  insertedId: ObjectId('6aaa04dae7d02ead8fa0e751')
+}
+
+--------------------------------------------------------
+
+Atlas atlas-104b3m-shard-0 [primary] PCEA24CY020> db.products.replaceOne(
+|   { productId: 999 },
+|   {
+|     productId: 999,
+|     productName: "Replaced Product",
+|     category: "Laptop",
+|     brand: "Dell",
+|     price: 50000,
+|     stock: 20
+|   }
+| )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+Atlas atlas-104b3m-shard-0 [primary] PCEA24CY020> db.products.find({ productId: 999 })
+[
+  {
+    _id: ObjectId('6aaa04dae7d02ead8fa0e751'),
+    productId: 999,
+    productName: 'Replaced Product',
+    category: 'Laptop',
+    brand: 'Dell',
+    price: 50000,
+    stock: 20
+  }
+]
+
+--------------------------------------------------------
+
+Atlas atlas-104b3m-shard-0 [primary] PCEA24CY020> db.products.deleteMany({
+|   category: "Test"
+| })
+{ acknowledged: true, deletedCount: 0 }
+
+Atlas atlas-104b3m-shard-0 [primary] PCEA24CY020> db.products.find({ category: "Test" })
+
+(no output)
+
+--------------------------------------------------------
+
+Atlas atlas-104b3m-shard-0 [primary] PCEA24CY020> db.crudTest.insertMany([
+|   { name: "A" },
+|   { name: "B" },
+|   { name: "C" }
+| ])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('6aaa0507e7d02ead8fa0e752'),
+    '1': ObjectId('6aaa0507e7d02ead8fa0e753'),
+    '2': ObjectId('6aaa0507e7d02ead8fa0e754')
+  }
+}
+
+Atlas atlas-104b3m-shard-0 [primary] PCEA24CY020> db.crudTest.countDocuments()
+3
+
+Atlas atlas-104b3m-shard-0 [primary] PCEA24CY020> db.crudTest.deleteMany({})
+{ acknowledged: true, deletedCount: 3 }
+
+Atlas atlas-104b3m-shard-0 [primary] PCEA24CY020> db.crudTest.countDocuments()
+0
+
+--------------------------------------------------------
