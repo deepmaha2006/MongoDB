@@ -9,6 +9,7 @@ A collection of practical MongoDB operations, queries, and class work logs condu
 - [`MongoDB Class - Monday Work Log.txt`](./MongoDB%20Class%20-%20Monday%20Work%20Log.txt) — Raw shell session log covering collection setup and basic CRUD operations.
 - [`MongoDB Class - Tuesday Work Log.txt`](./MongoDB%20Class%20-%20Tuesday%20Work%20Log.txt) — Raw shell session log covering database navigation and query operators.
 - [`MongoDB Class - Wednesday Work Log.txt`](./MongoDB%20Class%20-%20Wednesday%20Work%20Log.txt) — Raw shell session log covering aggregation pipelines, grouping, and collection joins.
+- [`MongoDB Class - Thursday Work Log.txt`](./MongoDB%20Class%20-%20Thursday%20Work%20Log.txt) — Raw shell session log covering indexing and query performance analysis.
 - [`Banking Transaction Project/`](./Banking%20Transaction%20Project) — Full-stack Node.js + Express + MongoDB banking system built using these concepts, deployed live on Render.
 
 ---
@@ -42,6 +43,12 @@ A collection of practical MongoDB operations, queries, and class work logs condu
 - **Filtering Stages**: `$match` to filter documents before/after grouping
 - **Collection Joins**: `$lookup` to combine data across related collections
 - **Multi-Stage Pipelines**: Chaining `$match`, `$group`, and `$lookup` together for real-world reporting queries
+
+### 5. Indexing & Query Performance
+- **Single-Field Indexes**: `db.product.createIndex({ price: 1 })`
+- **Compound Indexes**: Creating indexes across multiple fields
+- **Query Plan Analysis**: `db.product.find({...}).explain("executionStats")` to compare scan efficiency with and without an index
+- **Index Cleanup**: `db.product.dropIndex("price_1")`
 
 ---
 
