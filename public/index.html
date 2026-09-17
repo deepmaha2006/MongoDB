@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Banking Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css?v=__CSS_VERSION__" />
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 10l9-6 9 6v1H3v-1zm0 3h2v6H3v-6zm4 0h2v6H7v-6zm4 0h2v6h-2v-6zm4 0h2v6h-2v-6zm4 0h2v6h-2v-6zM2 20h20v2H2v-2z"/></svg>
+      </span>
+      <span class="brand-name">Banking Dashboard</span>
+    </div>
+
+    <nav class="nav-tabs" role="tablist" aria-label="Primary">
+      <button class="nav-tab active" data-tab="dashboard" role="tab" aria-selected="true">Dashboard</button>
+      <button class="nav-tab" data-tab="accounts-transactions" role="tab" aria-selected="false">Accounts &amp; Transactions</button>
+      <button class="nav-tab" data-tab="customer-insights" role="tab" aria-selected="false">Customer Insights</button>
+      <button class="nav-tab" data-tab="reports-export" role="tab" aria-selected="false">Reports &amp; Export</button>
+    </nav>
+
+    <button class="btn btn-accent" id="open-txn-dialog">+ New Transaction</button>
+  </header>
+
+  <main id="main-content">
+    <!-- ============ DASHBOARD OVERVIEW ============ -->
+    <section id="dashboard" class="tab-panel active" aria-labelledby="dashboard-title">
+      <h1 id="dashboard-title" class="page-title">Dashboard Overview</h1>
+      <p class="page-subtitle">A snapshot of your bank's balances and activity.</p>
+
+      <div class="kpi-grid" id="kpi-row"></div>
+
+      <div class="panel-card">
+        <div class="panel-head">
+          <h2>Cash Flow</h2>
+          <div class="segmented" id="range-toggle" role="group" aria-label="Time range">
+            <button class="seg-btn" data-range="7D">7D</button>
+            <button class="seg-btn active" data-range="30D">30D</button>
+            <button class="seg-btn" data-range="6M">6M</button>
+            <button class="seg-btn" data-range="1Y">1Y</button>
+          </div>
+        </div>
+        <div id="cashflow-chart" class="chart-body" role="img" aria-label="Chart of income, expenses, and net flow over time"></div>
+        <div class="chart-legend">
+          <span class="legend-item"><i class="dot" style="background:var(--color-accent)"></i>Income</span>
+          <span class="legend-item"><i class="dot" style="background:var(--color-danger)"></i>Expenses</span>
+          <span class="legend-item"><i class="dot" style="background:var(--color-navy-900)"></i>Net Flow</span>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-head">
+          <h2>Recent Transactions</h2>
+          <button class="link-btn" id="view-all-txns">View all</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <caption class="sr-only">Five most recent transactions across all accounts</caption>
+            <thead>
+              <tr><th scope="col">Date</th><th scope="col">Account</th><th scope="col">Category</th><th scope="col">Amount</th><th scope="col">Status</th></tr>
+            </thead>
+            <tbody id="dashboard-recent"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ACCOUNTS & TRANSACTIONS ============ -->
+    <section id="accounts-transactions" class="tab-panel" aria-labelledby="at-title">
+      <h1 id="at-title" class="page-title">Accounts &amp; Transactions</h1>
+      <p class="page-subtitle">Manage accounts and review every transaction.</p>
+
+      <div class="panel-card">
+        <div class="panel-head">
+          <h2>Accounts</h2>
+          <button class="btn btn-secondary" id="toggle-account-form" aria-expanded="false" aria-controls="account-form">+ Open Account</button>
+        </div>
+        <form id="account-form" class="inline-form" hidden>
+          <div class="field">
+            <label for="a-customer">Customer</label>
+            <select id="a-customer" required></select>
+          </div>
+          <div class="field">
+            <label for="a-type">Account type</label>
+            <select id="a-type">
+              <option value="Savings">Savings</option>
+              <option value="Current">Current</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="a-balance">Opening balance</label>
+            <input type="number" id="a-balance" min="0" step="0.01" value="0" />
+          </div>
+          <button type="submit" class="btn btn-primary">Open Account</button>
+        </form>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th scope="col">Account #</th><th scope="col">Customer</th><th scope="col">Type</th><th scope="col">Balance</th><th scope="col">Status</th></tr>
+            </thead>
+            <tbody id="accounts-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h2>Transactions</h2>
+
+        <form class="filter-bar" id="filter-form">
+          <div class="field grow">
+            <label for="f-search">Search</label>
+            <input type="text" id="f-search" placeholder="Merchant, description, account, category…" />
+          </div>
+          <div class="field">
+            <label for="f-type">Type</label>
+            <select id="f-type">
+              <option value="">All types</option>
+              <option value="deposit">Deposit</option>
+              <option value="withdraw">Withdraw</option>
+              <option value="transfer-in">Transfer in</option>
+              <option value="transfer-out">Transfer out</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-category">Category</label>
+            <select id="f-category"><option value="">All categories</option></select>
+          </div>
+          <div class="field">
+            <label for="f-account">Account</label>
+            <select id="f-account"><option value="">All accounts</option></select>
+          </div>
+          <div class="field">
+            <label for="f-status">Status</label>
+            <select id="f-status">
+              <option value="">All statuses</option>
+              <option value="completed">Completed</option>
+              <option value="pending">Pending</option>
+              <option value="flagged">Flagged</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-from">From date</label>
+            <input type="date" id="f-from" />
+          </div>
+          <div class="field">
+            <label for="f-to">To date</label>
+            <input type="date" id="f-to" />
+          </div>
+          <div class="field">
+            <label for="f-min">Min amount</label>
+            <input type="number" id="f-min" min="0" step="0.01" placeholder="0" />
+          </div>
+          <div class="field">
+            <label for="f-max">Max amount</label>
+            <input type="number" id="f-max" min="0" step="0.01" placeholder="Any" />
+          </div>
+          <button type="button" class="btn btn-secondary" id="f-clear">Clear filters</button>
+        </form>
+
+        <div class="table-toolbar">
+          <span class="table-count" id="transactions-count" aria-live="polite">0 results</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Category</th>
+                <th scope="col">Merchant</th>
+                <th scope="col">Description</th>
+                <th scope="col" class="sortable" data-sort="date" aria-sort="descending"><button class="th-btn">Date <span class="sort-arrow" data-arrow="date">▼</span></button></th>
+                <th scope="col" class="sortable" data-sort="amount"><button class="th-btn">Amount <span class="sort-arrow" data-arrow="amount"></span></button></th>
+                <th scope="col" class="sortable" data-sort="status"><button class="th-btn">Status <span class="sort-arrow" data-arrow="status"></span></button></th>
+                <th scope="col">Tags</th>
+              </tr>
+            </thead>
+            <tbody id="transactions-table"></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </section>
+
+    <!-- ============ CUSTOMER INSIGHTS ============ -->
+    <section id="customer-insights" class="tab-panel" aria-labelledby="ci-title">
+      <h1 id="ci-title" class="page-title">Customer Insights</h1>
+      <p class="page-subtitle">Customer profiles, account summaries, and transaction history.</p>
+
+      <div class="two-col">
+        <form id="customer-form" class="panel-card form-card">
+          <h2>Add Customer</h2>
+          <div class="field">
+            <label for="c-name">Full name</label>
+            <input type="text" id="c-name" required />
+            <span class="field-error" id="c-name-error"></span>
+          </div>
+          <div class="field">
+            <label for="c-email">Email</label>
+            <input type="email" id="c-email" required />
+            <span class="field-error" id="c-email-error"></span>
+          </div>
+          <div class="field">
+            <label for="c-phone">Phone</label>
+            <input type="text" id="c-phone" required />
+            <span class="field-error" id="c-phone-error"></span>
+          </div>
+          <div class="field">
+            <label for="c-address">Address</label>
+            <input type="text" id="c-address" />
+          </div>
+          <div class="field">
+            <label for="c-dob">Date of birth</label>
+            <input type="date" id="c-dob" />
+          </div>
+          <button type="submit" class="btn btn-primary">Create Customer</button>
+        </form>
+
+        <div class="panel-card">
+          <h2>Customers</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th scope="col">Name</th><th scope="col">Contact</th><th scope="col">Accounts</th><th scope="col">Total Balance</th><th scope="col">Joined</th><th scope="col"><span class="sr-only">Actions</span></th></tr>
+              </thead>
+              <tbody id="customers-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h2>Top Customers by Balance</h2>
+        <div id="customer-balance-chart" class="chart-body" role="img" aria-label="Bar chart of total balance per customer"></div>
+      </div>
+    </section>
+
+    <!-- ============ REPORTS & EXPORT ============ -->
+    <section id="reports-export" class="tab-panel" aria-labelledby="re-title">
+      <h1 id="re-title" class="page-title">Reports &amp; Export</h1>
+      <p class="page-subtitle">Summaries for a date range, exportable as CSV or PDF.</p>
+
+      <div class="panel-card">
+        <div class="date-range-row">
+          <div class="segmented" id="report-preset-toggle" role="group" aria-label="Report period presets">
+            <button class="seg-btn" data-range="7D">7 Days</button>
+            <button class="seg-btn active" data-range="MONTH">This Month</button>
+            <button class="seg-btn" data-range="YEAR">This Year</button>
+            <button class="seg-btn" data-range="ALL">All Time</button>
+          </div>
+          <div class="field">
+            <label for="report-from">From</label>
+            <input type="date" id="report-from" />
+          </div>
+          <div class="field">
+            <label for="report-to">To</label>
+            <input type="date" id="report-to" />
+          </div>
+        </div>
+      </div>
+
+      <div id="report-print-area">
+        <p class="print-only report-print-heading">Banking Dashboard — Report for <span id="report-print-range"></span></p>
+        <div class="kpi-grid" id="report-kpi-row"></div>
+
+        <div class="panel-card">
+          <h2>Spending by Category</h2>
+          <div id="category-chart" class="chart-body" role="img" aria-label="Bar chart of spending by category"></div>
+        </div>
+      </div>
+
+      <div class="panel-card no-print">
+        <h2>Export</h2>
+        <p class="muted-text">Download the data shown above.</p>
+        <div class="export-buttons">
+          <button class="btn btn-secondary" id="export-transactions">Export Transactions (CSV)</button>
+          <button class="btn btn-secondary" id="export-accounts">Export Accounts (CSV)</button>
+          <button class="btn btn-secondary" id="export-customers">Export Customers (CSV)</button>
+          <button class="btn btn-secondary" id="export-pdf">Print / Save as PDF</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ NEW TRANSACTION DIALOG ============ -->
+  <dialog id="txn-dialog" class="app-dialog" aria-labelledby="txn-dialog-title">
+    <form method="dialog" class="dialog-shell" id="txn-dialog-form">
+      <div class="dialog-head">
+        <h2 id="txn-dialog-title">New Transaction</h2>
+        <button type="button" class="icon-btn" id="close-txn-dialog" aria-label="Close">✕</button>
+      </div>
+
+      <!-- Step 1: form -->
+      <div class="dialog-step" data-step="form">
+        <div class="segmented" id="op-type-toggle" role="radiogroup" aria-label="Transaction type">
+          <button type="button" class="seg-btn active" data-op="deposit" role="radio" aria-checked="true">Deposit</button>
+          <button type="button" class="seg-btn" data-op="withdraw" role="radio" aria-checked="false">Withdraw</button>
+          <button type="button" class="seg-btn" data-op="transfer" role="radio" aria-checked="false">Transfer</button>
+        </div>
+
+        <div class="field" id="field-account">
+          <label for="txn-account">Account</label>
+          <select id="txn-account" required></select>
+          <span class="field-error" id="txn-account-error"></span>
+        </div>
+        <div class="field" id="field-to-account" hidden>
+          <label for="txn-to-account">To account</label>
+          <select id="txn-to-account"></select>
+          <span class="field-error" id="txn-to-account-error"></span>
+        </div>
+        <div class="field">
+          <label for="txn-amount">Amount</label>
+          <input type="number" id="txn-amount" min="0.01" step="0.01" required inputmode="decimal" />
+          <span class="field-error" id="txn-amount-error"></span>
+        </div>
+        <div class="field">
+          <label for="txn-category">Category <span class="optional">(optional)</span></label>
+          <input list="category-list-deposit" id="txn-category" />
+        </div>
+        <div class="field" id="field-merchant">
+          <label for="txn-merchant">Merchant / payee <span class="optional">(optional)</span></label>
+          <input type="text" id="txn-merchant" />
+        </div>
+        <div class="field">
+          <label for="txn-note">Note <span class="optional">(optional)</span></label>
+          <input type="text" id="txn-note" />
+        </div>
+        <div class="field">
+          <label for="txn-tags">Tags <span class="optional">(comma separated, optional)</span></label>
+          <input type="text" id="txn-tags" />
+        </div>
+
+        <div class="dialog-actions">
+          <button type="button" class="btn btn-primary" id="txn-review-btn">Review transaction</button>
+        </div>
+      </div>
+
+      <!-- Step 2: confirm -->
+      <div class="dialog-step" data-step="confirm" hidden>
+        <div class="confirm-summary" id="confirm-summary"></div>
+        <p class="confirm-warning" id="confirm-warning" hidden></p>
+        <div class="dialog-actions">
+          <button type="button" class="btn btn-secondary" id="txn-back-btn">Back</button>
+          <button type="button" class="btn btn-primary" id="txn-confirm-btn">Confirm &amp; Submit</button>
+        </div>
+      </div>
+
+      <!-- Step 3: result -->
+      <div class="dialog-step" data-step="result" hidden>
+        <div id="txn-result-body"></div>
+        <div class="dialog-actions">
+          <button type="button" class="btn btn-secondary" id="txn-retry-btn" hidden>Try again</button>
+          <button type="button" class="btn btn-primary" id="txn-done-btn">Done</button>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ============ GENERIC CONFIRM DIALOG (destructive actions) ============ -->
+  <dialog id="confirm-dialog" class="app-dialog small" aria-labelledby="confirm-dialog-title">
+    <div class="dialog-shell">
+      <div class="dialog-head">
+        <h2 id="confirm-dialog-title">Are you sure?</h2>
+      </div>
+      <p id="confirm-dialog-message"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-secondary" id="confirm-dialog-cancel">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirm-dialog-ok">Confirm</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ============ CUSTOMER DETAIL DIALOG ============ -->
+  <dialog id="customer-dialog" class="app-dialog" aria-labelledby="customer-dialog-title">
+    <div class="dialog-shell">
+      <div class="dialog-head">
+        <h2 id="customer-dialog-title">Customer</h2>
+        <button type="button" class="icon-btn" id="close-customer-dialog" aria-label="Close">✕</button>
+      </div>
+      <div id="customer-dialog-body"></div>
+    </div>
+  </dialog>
+
+  <!--
+    Three separate datalists, one per transaction type, so the category
+    autocomplete can never suggest a value that contradicts the actual
+    type (e.g. "Withdrawal" while Deposit is selected). setOpType() in
+    app.js repoints #txn-category's `list` attribute at the matching one.
+  -->
+  <datalist id="category-list-deposit">
+    <option value="Deposit"></option>
+    <option value="Payroll"></option>
+    <option value="Consulting"></option>
+    <option value="Other"></option>
+  </datalist>
+  <datalist id="category-list-withdraw">
+    <option value="Withdrawal"></option>
+    <option value="Payroll"></option>
+    <option value="Marketing"></option>
+    <option value="Office Supplies"></option>
+    <option value="Utilities"></option>
+    <option value="Rent"></option>
+    <option value="Travel"></option>
+    <option value="Other"></option>
+  </datalist>
+  <datalist id="category-list-transfer">
+    <option value="Transfer"></option>
+    <option value="Other"></option>
+  </datalist>
+
+  <div id="toast-container" aria-live="polite" aria-atomic="false"></div>
+
+  <script src="app.js?v=__JS_VERSION__"></script>
+</body>
+</html>

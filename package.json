@@ -1,0 +1,17 @@
+{
+  "name": "banking-transaction-project",
+  "version": "1.0.0",
+  "description": "Fullstack Banking Transaction System with MongoDB Atlas",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node --watch server/server.js",
+    "seed": "node server/seed.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.6.0"
+  }
+}
