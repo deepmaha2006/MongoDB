@@ -1,0 +1,289 @@
+MongoDB Class - Monday Work Log
+================================
+
+
+===========================================
+Working with "students" Collection (test database)
+===========================================
+
+1) Create a Collection
+------------------------
+test> db.createCollection("students")
+{ ok: 1 }
+
+
+2) Insert a Single Document
+------------------------------
+test> db.students.insertOne({
+  name: "Deepesh",
+  age: 20,
+  email: "deepesh@gmail.com",
+  number: "987XXX3210"
+})
+
+Output:
+{
+  acknowledged: true,
+  insertedId: ObjectId('6aa7edf772d750a2750fec18')
+}
+
+
+3) Insert Multiple Documents
+--------------------------------
+test> db.students.insertMany([
+  {
+    name: "Rahul",
+    age: 20,
+    email: "rahul@gmail.com",
+    number: "9876543210"
+  },
+  {
+    name: "Priya",
+    age: 21,
+    email: "priya@gmail.com",
+    number: "9876543211"
+  },
+  {
+    name: "Amit",
+    age: 19,
+    email: "amit@gmail.com",
+    number: "9876543212"
+  }
+])
+
+Output:
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('6aa7edff72d750a2750fec19'),
+    '1': ObjectId('6aa7edff72d750a2750fec1a'),
+    '2': ObjectId('6aa7edff72d750a2750fec1b')
+  }
+}
+
+
+4) Find All Documents in the Collection
+-------------------------------------------
+test> db.students.find()
+
+Output:
+[
+  {
+    _id: ObjectId('6aa7edf772d750a2750fec18'),
+    name: 'Deepesh',
+    age: 20,
+    email: 'deepesh@gmail.com',
+    number: '987XXX3210'
+  },
+  {
+    _id: ObjectId('6aa7edff72d750a2750fec19'),
+    name: 'Rahul',
+    age: 20,
+    email: 'rahul@gmail.com',
+    number: '9876543210'
+  },
+  {
+    _id: ObjectId('6aa7edff72d750a2750fec1a'),
+    name: 'Priya',
+    age: 21,
+    email: 'priya@gmail.com',
+    number: '9876543211'
+  },
+  {
+    _id: ObjectId('6aa7edff72d750a2750fec1b'),
+    name: 'Amit',
+    age: 19,
+    email: 'amit@gmail.com',
+    number: '9876543212'
+  }
+]
+
+
+5) Show Collections
+-----------------------
+test> show collections
+students
+
+
+===========================================
+Working with "ecommerce" Database
+===========================================
+
+1) Show Databases
+---------------------
+Atlas atlas-12fzpa-shard-0 [primary] test> show dbs
+sample_mflix  149.18 MiB
+admin                0 B
+local                0 B
+
+
+2) Switch to / Create "ecommerce" Database
+-----------------------------------------------
+Atlas atlas-12fzpa-shard-0 [primary] test> use ecommerce
+switched to db ecommerce
+
+
+3) Insert Multiple Product Documents
+-----------------------------------------
+Atlas atlas-12fzpa-shard-0 [primary] ecommerce> db.products.insertMany([
+  {
+    product_id: 101,
+    product_name: "Wireless Headphones",
+    category: "Electronics",
+    price: 2499,
+    stock: 50,
+    brand: "Boat",
+    rating: 4.5
+  },
+  {
+    product_id: 102,
+    product_name: "Smart Watch",
+    category: "Electronics",
+    price: 3999,
+    stock: 30,
+    brand: "Noise",
+    rating: 4.3
+  },
+  {
+    product_id: 103,
+    product_name: "Running Shoes",
+    category: "Footwear",
+    price: 2999,
+    stock: 40,
+    brand: "Nike",
+    rating: 4.6
+  },
+  {
+    product_id: 104,
+    product_name: "Laptop Backpack",
+    category: "Bags",
+    price: 1499,
+    stock: 75,
+    brand: "American Tourister",
+    rating: 4.4
+  },
+  {
+    product_id: 105,
+    product_name: "Mechanical Keyboard",
+    category: "Computer Accessories",
+    price: 3499,
+    stock: 25,
+    brand: "Redragon",
+    rating: 4.7
+  }
+])
+
+Output:
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('6aa7b48f8939ce8f15718ef6'),
+    '1': ObjectId('6aa7b48f8939ce8f15718ef7'),
+    '2': ObjectId('6aa7b48f8939ce8f15718ef8'),
+    '3': ObjectId('6aa7b48f8939ce8f15718ef9'),
+    '4': ObjectId('6aa7b48f8939ce8f15718efa')
+  }
+}
+
+
+4) Show Databases (after insert)
+-------------------------------------
+Atlas atlas-12fzpa-shard-0 [primary] ecommerce> show dbs
+ecommerce       8.00 KiB
+sample_mflix  149.18 MiB
+admin                0 B
+local                0 B
+
+
+5) Show Collections
+-----------------------
+Atlas atlas-12fzpa-shard-0 [primary] ecommerce> show collections
+products
+
+
+6) Find All Products
+-------------------------
+Atlas atlas-12fzpa-shard-0 [primary] ecommerce> db.products.find()
+
+Output:
+[
+  {
+    _id: ObjectId('6aa7b48f8939ce8f15718ef6'),
+    product_id: 101,
+    product_name: 'Wireless Headphones',
+    category: 'Electronics',
+    price: 2499,
+    stock: 50,
+    brand: 'Boat',
+    rating: 4.5
+  },
+  {
+    _id: ObjectId('6aa7b48f8939ce8f15718ef7'),
+    product_id: 102,
+    product_name: 'Smart Watch',
+    category: 'Electronics',
+    price: 3999,
+    stock: 30,
+    brand: 'Noise',
+    rating: 4.3
+  },
+  {
+    _id: ObjectId('6aa7b48f8939ce8f15718ef8'),
+    product_id: 103,
+    product_name: 'Running Shoes',
+    category: 'Footwear',
+    price: 2999,
+    stock: 40,
+    brand: 'Nike',
+    rating: 4.6
+  },
+  {
+    _id: ObjectId('6aa7b48f8939ce8f15718ef9'),
+    product_id: 104,
+    product_name: 'Laptop Backpack',
+    category: 'Bags',
+    price: 1499,
+    stock: 75,
+    brand: 'American Tourister',
+    rating: 4.4
+  },
+  {
+    _id: ObjectId('6aa7b48f8939ce8f15718efa'),
+    product_id: 105,
+    product_name: 'Mechanical Keyboard',
+    category: 'Computer Accessories',
+    price: 3499,
+    stock: 25,
+    brand: 'Redragon',
+    rating: 4.7
+  }
+]
+
+
+7) Find Products by Filter (category = "Electronics")
+-----------------------------------------------------------
+Atlas atlas-12fzpa-shard-0 [primary] ecommerce> db.products.find({category: "Electronics"})
+
+Output:
+[
+  {
+    _id: ObjectId('6aa7b48f8939ce8f15718ef6'),
+    product_id: 101,
+    product_name: 'Wireless Headphones',
+    category: 'Electronics',
+    price: 2499,
+    stock: 50,
+    brand: 'Boat',
+    rating: 4.5
+  },
+  {
+    _id: ObjectId('6aa7b48f8939ce8f15718ef7'),
+    product_id: 102,
+    product_name: 'Smart Watch',
+    category: 'Electronics',
+    price: 3999,
+    stock: 30,
+    brand: 'Noise',
+    rating: 4.3
+  }
+]
