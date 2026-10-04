@@ -39,9 +39,14 @@ A collection of practical MongoDB operations, queries, and class work logs condu
 - **Logical Operators**: `$and`, `$or`
 
 ### 4. Aggregation Pipelines
-- **Grouping**: `$group` to summarize documents (e.g. totals and counts per category)
+- **Grouping**: `$group` with `$sum` and `$avg` accumulators to summarize documents (e.g. totals and counts per category)
 - **Filtering Stages**: `$match` to filter documents before/after grouping
+- **Shaping & Paging**: `$project`, `$sort`, `$skip`, `$limit`, and `$count`
+- **Computed Fields**: `$addFields` and `$unset`, with expressions like `$multiply`, `$cond`, and `$toUpper`
+- **Array Handling**: `$unwind` to break out `tags` arrays into one document per element
 - **Collection Joins**: `$lookup` to combine data across related collections
+- **Bucketing**: `$bucket` (fixed price ranges) and `$bucketAuto` (evenly distributed buckets)
+- **Writing Results**: `$out` to save pipeline output to a new collection, `$merge` to upsert into an existing one
 - **Multi-Stage Pipelines**: Chaining `$match`, `$group`, and `$lookup` together for real-world reporting queries
 
 ### 5. Indexing & Query Performance
