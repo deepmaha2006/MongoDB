@@ -6,10 +6,16 @@ A collection of practical MongoDB operations, queries, and class work logs condu
 
 ## 📁 Contents
 
-- [`MongoDB Class - Monday Work Log.txt`](./MongoDB%20Class%20-%20Monday%20Work%20Log.txt) — Raw shell session log covering collection setup and basic CRUD operations.
-- [`MongoDB Class - Tuesday Work Log.txt`](./MongoDB%20Class%20-%20Tuesday%20Work%20Log.txt) — Raw shell session log covering database navigation and query operators.
-- [`MongoDB Class - Wednesday Work Log.txt`](./MongoDB%20Class%20-%20Wednesday%20Work%20Log.txt) — Raw shell session log covering aggregation pipelines, grouping, and collection joins.
-- [`MongoDB Class - Thursday Work Log.txt`](./MongoDB%20Class%20-%20Thursday%20Work%20Log.txt) — Raw shell session log covering indexing and query performance analysis.
+### 📂 CRT-1 — Class Round 1
+- [`CRT-1/MongoDB Class - Monday Work Log.txt`](./CRT-1/MongoDB%20Class%20-%20Monday%20Work%20Log.txt) — Shell session covering collection setup and basic CRUD operations.
+- [`CRT-1/MongoDB Class - Tuesday Work Log.txt`](./CRT-1/MongoDB%20Class%20-%20Tuesday%20Work%20Log.txt) — Shell session covering database navigation and query operators.
+- [`CRT-1/MongoDB Class - Wednesday Work Log.txt`](./CRT-1/MongoDB%20Class%20-%20Wednesday%20Work%20Log.txt) — Shell session covering aggregation pipelines, grouping, and collection joins.
+- [`CRT-1/MongoDB Class - Thursday Work Log.txt`](./CRT-1/MongoDB%20Class%20-%20Thursday%20Work%20Log.txt) — Shell session covering indexing and query performance analysis.
+
+### 📂 CRT-2 — Class Round 2
+- [`CRT-2/MongoDB Class - Tuesday Work Log.txt`](./CRT-2/MongoDB%20Class%20-%20Tuesday%20Work%20Log.txt) — Shell session covering advanced indexing: compound indexes, multikey indexes, hidden indexes, unique indexes, `explain()` analysis, and index statistics.
+
+### 📂 Banking Transaction Project
 - [`Banking Transaction Project/`](./Banking%20Transaction%20Project) — Full-stack Node.js + Express + MongoDB banking system built using these concepts, deployed live on Render.
 
 ---
@@ -49,11 +55,21 @@ A collection of practical MongoDB operations, queries, and class work logs condu
 - **Writing Results**: `$out` to save pipeline output to a new collection, `$merge` to upsert into an existing one
 - **Multi-Stage Pipelines**: Chaining `$match`, `$group`, and `$lookup` together for real-world reporting queries
 
-### 5. Indexing & Query Performance
+### 5. Indexing & Query Performance (CRT-1)
 - **Single-Field Indexes**: `db.product.createIndex({ price: 1 })`
 - **Compound Indexes**: Creating indexes across multiple fields
 - **Query Plan Analysis**: `db.product.find({...}).explain("executionStats")` to compare scan efficiency with and without an index
 - **Index Cleanup**: `db.product.dropIndex("price_1")`
+
+### 6. Advanced Indexing & Index Management (CRT-2)
+- **Single & Compound Indexes**: `createIndex({ name: 1 })`, `createIndex({ city: 1, course: 1 })`, `createIndex({ course: 1, marks: -1 })`
+- **Multikey Indexes**: Indexing array fields (`skills`) for element-level queries
+- **Hidden Indexes**: `hideIndex()` / `unhideIndex()` to test index removal impact without dropping
+- **Unique Indexes**: Enforcing uniqueness with `{ unique: true }` and handling `E11000` duplicate key errors
+- **explain() Deep Dive**: Reading `IXSCAN` vs `COLLSCAN`, `nReturned`, `totalKeysExamined`, `totalDocsExamined`
+- **Index Hints**: Forcing a specific index with `.hint({ name: 1 })` and `.hint({ $natural: 1 })`
+- **Index Statistics**: `db.students.aggregate([{ $indexStats: {} }])` to track usage per index
+- **Index Naming & Conflicts**: Custom index names, and `IndexOptionsConflict` error when re-creating with different options
 
 ---
 
