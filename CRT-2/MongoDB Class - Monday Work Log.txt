@@ -1,0 +1,1223 @@
+PS C:\Windows\system32> mongosh "mongodb+srv://deepeshonwork_db_user:tGS1jmor1ThcZLxA@cluster0.aak7tqx.mongodb.net/"
+Current Mongosh Log ID: ************************
+Connecting to:          mongodb+srv://<credentials>@cluster0.aak7tqx.mongodb.net/?appName=mongosh+2.10.0
+Using MongoDB:          8.0.34
+Using Mongosh:          2.10.0
+mongosh 2.14.0 is available for download: https://www.mongodb.com/try/download/shell
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+Atlas atlas-73fkh6-shard-0 [primary] test> show dbs
+BankingTransaction     288.00 KiB
+MongoDB-S2             160.00 KiB
+ai_interview_platform  332.00 KiB
+banking                208.00 KiB
+sample_mflix           141.38 MiB
+admin                         0 B
+local                         0 B
+Atlas atlas-73fkh6-shard-0 [primary] test> use mongodb_index_lab
+|
+| db.students.drop()
+|
+| db.students.insertMany([
+|   { name: "Rahul", age: 20, city: "Jaipur", course: "BCA", marks: 85, skills: ["Python", "MongoDB"], active: true },
+|   { name: "Amit", age: 21, city: "Delhi", course: "BCA", marks: 78, skills: ["Java", "SQL"], active: true },
+|   { name: "Priya", age: 22, city: "Jaipur", course: "MCA", marks: 92, skills: ["Python", "SQL"], active: true },
+|   { name: "Neha", age: 20, city: "Mumbai", course: "BCA", marks: 88, skills: ["JavaScript", "MongoDB"], active: false },
+|   { name: "Arjun", age: 23, city: "Delhi", course: "MCA", marks: 75, skills: ["Python", "Java"], active: true },
+|   { name: "Karan", age: 21, city: "Jaipur", course: "BBA", marks: 69, skills: ["Excel", "SQL"], active: true },
+|   { name: "Ananya", age: 22, city: "Mumbai", course: "BCA", marks: 95, skills: ["Python", "MongoDB"], active: true },
+|   { name: "Vikas", age: 24, city: "Delhi", course: "MCA", marks: 81, skills: ["Java", "SQL"], active: false },
+|   { name: "Sneha", age: 19, city: "Jaipur", course: "BCA", marks: 90, skills: ["Python", "Excel"], active: true },
+|   { name: "Rohan", age: 23, city: "Mumbai", course: "BBA", marks: 72, skills: ["SQL", "Excel"], active: true }
+| ])
+|
+| db.students.countDocuments()
+switched to db mongodb_index_lab
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students.createIndex({ name: 1 })
+name_1
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students.find({ name: "Rahul" })
+
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students.createIndex({ marks: -1 })
+marks_-1
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students.find({}, { _id: 0, name: 1, marks: 1 })
+|   .sort({ marks: -1 })
+
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students.createIndex(
+|   { city: 1, course: 1 },
+|   { name: "city_course_idx" }
+| )
+city_course_idx
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students.find({
+|   city: "Jaipur",
+|   course: "BCA"
+| })
+
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students.createIndex(
+|   { course: 1, marks: -1 },
+|   { name: "course_marks_idx" }
+| )
+|
+| db.students.find({ course: "BCA" })
+|   .sort({ marks: -1 })
+
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students.createIndex(
+|   { skills: 1 },
+|   { name: "skills_idx" }
+| )
+skills_idx
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students.find({ skills: "Python" })
+
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students.find({
+|   skills: { $all: ["Python", "SQL"] }
+| })
+
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students
+|   .explain("executionStats")
+|   .find({ name: "Rahul" })
+{
+  explainVersion: '1',
+  queryPlanner: {
+    namespace: 'mongodb_index_lab.students',
+    parsedQuery: { name: { '$eq': 'Rahul' } },
+    indexFilterSet: false,
+    queryHash: '544F3E5C',
+    planCacheShapeHash: '544F3E5C',
+    planCacheKey: 'EEE0759C',
+    optimizationTimeMillis: 0,
+    maxIndexedOrSolutionsReached: false,
+    maxIndexedAndSolutionsReached: false,
+    maxScansToExplodeReached: false,
+    prunedSimilarIndexes: false,
+    winningPlan: {
+      isCached: false,
+      stage: 'FETCH',
+      inputStage: {
+        stage: 'IXSCAN',
+        keyPattern: { name: 1 },
+        indexName: 'name_1',
+        isMultiKey: false,
+        multiKeyPaths: { name: [] },
+        isUnique: false,
+        isSparse: false,
+        isPartial: false,
+        indexVersion: 2,
+        direction: 'forward',
+        indexBounds: { name: [ '["Rahul", "Rahul"]' ] }
+      }
+    },
+    rejectedPlans: []
+  },
+  executionStats: {
+    executionSuccess: true,
+    nReturned: 0,
+    executionTimeMillis: 0,
+    totalKeysExamined: 0,
+    totalDocsExamined: 0,
+    executionStages: {
+      isCached: false,
+      stage: 'FETCH',
+      nReturned: 0,
+      executionTimeMillisEstimate: 0,
+      works: 1,
+      advanced: 0,
+      needTime: 0,
+      needYield: 0,
+      saveState: 0,
+      restoreState: 0,
+      isEOF: 1,
+      docsExamined: 0,
+      alreadyHasObj: 0,
+      inputStage: {
+        stage: 'IXSCAN',
+        nReturned: 0,
+        executionTimeMillisEstimate: 0,
+        works: 1,
+        advanced: 0,
+        needTime: 0,
+        needYield: 0,
+        saveState: 0,
+        restoreState: 0,
+        isEOF: 1,
+        keyPattern: { name: 1 },
+        indexName: 'name_1',
+        isMultiKey: false,
+        multiKeyPaths: { name: [] },
+        isUnique: false,
+        isSparse: false,
+        isPartial: false,
+        indexVersion: 2,
+        direction: 'forward',
+        indexBounds: { name: [ '["Rahul", "Rahul"]' ] },
+        keysExamined: 0,
+        seeks: 1,
+        dupsTested: 0,
+        dupsDropped: 0
+      }
+    }
+  },
+  queryShapeHash: 'B20D182C5968B565500026542909DEB06CD7BE4AC652E9D5C8905C218771C02D',
+  command: {
+    find: 'students',
+    filter: { name: 'Rahul' },
+    '$db': 'mongodb_index_lab'
+  },
+  serverInfo: {
+    host: 'ac-0wxjxgv-shard-00-01.aak7tqx.mongodb.net',
+    port: 27017,
+    version: '8.0.34',
+    gitVersion: '51db4515a6597aedcf6188ee4e48a27e65b065ae'
+  },
+  serverParameters: {
+    internalQueryFacetBufferSizeBytes: 104857600,
+    internalQueryFacetMaxOutputDocSizeBytes: 104857600,
+    internalLookupStageIntermediateDocumentMaxSizeBytes: 16793600,
+    internalDocumentSourceGroupMaxMemoryBytes: 104857600,
+    internalQueryMaxBlockingSortMemoryUsageBytes: 33554432,
+    internalQueryProhibitBlockingMergeOnMongoS: 0,
+    internalQueryMaxAddToSetBytes: 104857600,
+    internalDocumentSourceSetWindowFieldsMaxMemoryBytes: 104857600,
+    internalQueryFrameworkControl: 'trySbeRestricted',
+    internalQueryPlannerIgnoreIndexWithCollationForRegex: 1
+  },
+  ok: 1,
+  '$clusterTime': {
+    clusterTime: Timestamp({ t: 1793070648, i: 1 }),
+    signature: {
+      hash: Binary.createFromBase64('G+9sHJXE+7zTBoooktKExX1+K7c=', 0),
+      keyId: Long('7647247355665711112')
+    }
+  },
+  operationTime: Timestamp({ t: 1793070648, i: 1 })
+}
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students
+|   .explain("executionStats")
+|   .find({ city: "Jaipur", course: "BCA" })
+{
+  explainVersion: '1',
+  queryPlanner: {
+    namespace: 'mongodb_index_lab.students',
+    parsedQuery: {
+      '$and': [ { city: { '$eq': 'Jaipur' } }, { course: { '$eq': 'BCA' } } ]
+    },
+    indexFilterSet: false,
+    queryHash: 'CF3FCC11',
+    planCacheShapeHash: 'CF3FCC11',
+    planCacheKey: '9A6BDF2A',
+    optimizationTimeMillis: 0,
+    maxIndexedOrSolutionsReached: false,
+    maxIndexedAndSolutionsReached: false,
+    maxScansToExplodeReached: false,
+    prunedSimilarIndexes: false,
+    winningPlan: {
+      isCached: false,
+      stage: 'FETCH',
+      inputStage: {
+        stage: 'IXSCAN',
+        keyPattern: { city: 1, course: 1 },
+        indexName: 'city_course_idx',
+        isMultiKey: false,
+        multiKeyPaths: { city: [], course: [] },
+        isUnique: false,
+        isSparse: false,
+        isPartial: false,
+        indexVersion: 2,
+        direction: 'forward',
+        indexBounds: {
+          city: [ '["Jaipur", "Jaipur"]' ],
+          course: [ '["BCA", "BCA"]' ]
+        }
+      }
+    },
+    rejectedPlans: [
+      {
+        isCached: false,
+        stage: 'FETCH',
+        filter: { city: { '$eq': 'Jaipur' } },
+        inputStage: {
+          stage: 'IXSCAN',
+          keyPattern: { course: 1, marks: -1 },
+          indexName: 'course_marks_idx',
+          isMultiKey: false,
+          multiKeyPaths: { course: [], marks: [] },
+          isUnique: false,
+          isSparse: false,
+          isPartial: false,
+          indexVersion: 2,
+          direction: 'forward',
+          indexBounds: {
+            course: [ '["BCA", "BCA"]' ],
+            marks: [ '[MaxKey, MinKey]' ]
+          }
+        }
+      }
+    ]
+  },
+  executionStats: {
+    executionSuccess: true,
+    nReturned: 0,
+    executionTimeMillis: 0,
+    totalKeysExamined: 0,
+    totalDocsExamined: 0,
+    executionStages: {
+      isCached: false,
+      stage: 'FETCH',
+      nReturned: 0,
+      executionTimeMillisEstimate: 0,
+      works: 2,
+      advanced: 0,
+      needTime: 0,
+      needYield: 0,
+      saveState: 0,
+      restoreState: 0,
+      isEOF: 1,
+      docsExamined: 0,
+      alreadyHasObj: 0,
+      inputStage: {
+        stage: 'IXSCAN',
+        nReturned: 0,
+        executionTimeMillisEstimate: 0,
+        works: 1,
+        advanced: 0,
+        needTime: 0,
+        needYield: 0,
+        saveState: 0,
+        restoreState: 0,
+        isEOF: 1,
+        keyPattern: { city: 1, course: 1 },
+        indexName: 'city_course_idx',
+        isMultiKey: false,
+        multiKeyPaths: { city: [], course: [] },
+        isUnique: false,
+        isSparse: false,
+        isPartial: false,
+        indexVersion: 2,
+        direction: 'forward',
+        indexBounds: {
+          city: [ '["Jaipur", "Jaipur"]' ],
+          course: [ '["BCA", "BCA"]' ]
+        },
+        keysExamined: 0,
+        seeks: 1,
+        dupsTested: 0,
+        dupsDropped: 0
+      }
+    }
+  },
+  queryShapeHash: 'D4C5C939EE93A63896347D71AA7FD77926A0DC1064B102BF1AE9B7E69478108A',
+  command: {
+    find: 'students',
+    filter: { city: 'Jaipur', course: 'BCA' },
+    '$db': 'mongodb_index_lab'
+  },
+  serverInfo: {
+    host: 'ac-0wxjxgv-shard-00-01.aak7tqx.mongodb.net',
+    port: 27017,
+    version: '8.0.34',
+    gitVersion: '51db4515a6597aedcf6188ee4e48a27e65b065ae'
+  },
+  serverParameters: {
+    internalQueryFacetBufferSizeBytes: 104857600,
+    internalQueryFacetMaxOutputDocSizeBytes: 104857600,
+    internalLookupStageIntermediateDocumentMaxSizeBytes: 16793600,
+    internalDocumentSourceGroupMaxMemoryBytes: 104857600,
+    internalQueryMaxBlockingSortMemoryUsageBytes: 33554432,
+    internalQueryProhibitBlockingMergeOnMongoS: 0,
+    internalQueryMaxAddToSetBytes: 104857600,
+    internalDocumentSourceSetWindowFieldsMaxMemoryBytes: 104857600,
+    internalQueryFrameworkControl: 'trySbeRestricted',
+    internalQueryPlannerIgnoreIndexWithCollationForRegex: 1
+  },
+  ok: 1,
+  '$clusterTime': {
+    clusterTime: Timestamp({ t: 1793070709, i: 2 }),
+    signature: {
+      hash: Binary.createFromBase64('52TCvA0BUxYIBNiCCfjynZlP+gM=', 0),
+      keyId: Long('7647247355665711112')
+    }
+  },
+  operationTime: Timestamp({ t: 1793070709, i: 2 })
+}
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students
+|   .explain("executionStats")
+|   .find({ course: "BCA" })
+|   .sort({ marks: -1 })
+{
+  explainVersion: '1',
+  queryPlanner: {
+    namespace: 'mongodb_index_lab.students',
+    parsedQuery: { course: { '$eq': 'BCA' } },
+    indexFilterSet: false,
+    queryHash: 'CB7F516F',
+    planCacheShapeHash: 'CB7F516F',
+    planCacheKey: 'C3D3221A',
+    optimizationTimeMillis: 0,
+    maxIndexedOrSolutionsReached: false,
+    maxIndexedAndSolutionsReached: false,
+    maxScansToExplodeReached: false,
+    prunedSimilarIndexes: false,
+    winningPlan: {
+      isCached: false,
+      stage: 'FETCH',
+      inputStage: {
+        stage: 'IXSCAN',
+        keyPattern: { course: 1, marks: -1 },
+        indexName: 'course_marks_idx',
+        isMultiKey: false,
+        multiKeyPaths: { course: [], marks: [] },
+        isUnique: false,
+        isSparse: false,
+        isPartial: false,
+        indexVersion: 2,
+        direction: 'forward',
+        indexBounds: { course: [ '["BCA", "BCA"]' ], marks: [ '[MaxKey, MinKey]' ] }
+      }
+    },
+    rejectedPlans: []
+  },
+  executionStats: {
+    executionSuccess: true,
+    nReturned: 0,
+    executionTimeMillis: 0,
+    totalKeysExamined: 0,
+    totalDocsExamined: 0,
+    executionStages: {
+      isCached: false,
+      stage: 'FETCH',
+      nReturned: 0,
+      executionTimeMillisEstimate: 0,
+      works: 1,
+      advanced: 0,
+      needTime: 0,
+      needYield: 0,
+      saveState: 0,
+      restoreState: 0,
+      isEOF: 1,
+      docsExamined: 0,
+      alreadyHasObj: 0,
+      inputStage: {
+        stage: 'IXSCAN',
+        nReturned: 0,
+        executionTimeMillisEstimate: 0,
+        works: 1,
+        advanced: 0,
+        needTime: 0,
+        needYield: 0,
+        saveState: 0,
+        restoreState: 0,
+        isEOF: 1,
+        keyPattern: { course: 1, marks: -1 },
+        indexName: 'course_marks_idx',
+        isMultiKey: false,
+        multiKeyPaths: { course: [], marks: [] },
+        isUnique: false,
+        isSparse: false,
+        isPartial: false,
+        indexVersion: 2,
+        direction: 'forward',
+        indexBounds: { course: [ '["BCA", "BCA"]' ], marks: [ '[MaxKey, MinKey]' ] },
+        keysExamined: 0,
+        seeks: 1,
+        dupsTested: 0,
+        dupsDropped: 0
+      }
+    }
+  },
+  queryShapeHash: 'F082BC9E409DF293940E3703161522276E709344D9297034F10DD7E6ED5989E1',
+  command: {
+    find: 'students',
+    filter: { course: 'BCA' },
+    sort: { marks: -1 },
+    '$db': 'mongodb_index_lab'
+  },
+  serverInfo: {
+    host: 'ac-0wxjxgv-shard-00-01.aak7tqx.mongodb.net',
+    port: 27017,
+    version: '8.0.34',
+    gitVersion: '51db4515a6597aedcf6188ee4e48a27e65b065ae'
+  },
+  serverParameters: {
+    internalQueryFacetBufferSizeBytes: 104857600,
+    internalQueryFacetMaxOutputDocSizeBytes: 104857600,
+    internalLookupStageIntermediateDocumentMaxSizeBytes: 16793600,
+    internalDocumentSourceGroupMaxMemoryBytes: 104857600,
+    internalQueryMaxBlockingSortMemoryUsageBytes: 33554432,
+    internalQueryProhibitBlockingMergeOnMongoS: 0,
+    internalQueryMaxAddToSetBytes: 104857600,
+    internalDocumentSourceSetWindowFieldsMaxMemoryBytes: 104857600,
+    internalQueryFrameworkControl: 'trySbeRestricted',
+    internalQueryPlannerIgnoreIndexWithCollationForRegex: 1
+  },
+  ok: 1,
+  '$clusterTime': {
+    clusterTime: Timestamp({ t: 1793070720, i: 2 }),
+    signature: {
+      hash: Binary.createFromBase64('3XDCjNt3ERuYcvFAdJQmJ5Gxdmg=', 0),
+      keyId: Long('7647247355665711112')
+    }
+  },
+  operationTime: Timestamp({ t: 1793070720, i: 2 })
+}
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students.createIndex(
+|   { age: 1 },
+|   { name: "age_test_idx" }
+| )
+age_test_idx
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students.hideIndex("age_test_idx")
+{
+  hidden_old: false,
+  hidden_new: true,
+  ok: 1,
+  '$clusterTime': {
+    clusterTime: Timestamp({ t: 1793070738, i: 4 }),
+    signature: {
+      hash: Binary.createFromBase64('+3MJnppSQ9qC0a9evqnlwcTJ9bs=', 0),
+      keyId: Long('7647247355665711112')
+    }
+  },
+  operationTime: Timestamp({ t: 1793070738, i: 4 })
+}
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students.getIndexes()
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { name: 1 }, name: 'name_1' },
+  { v: 2, key: { marks: -1 }, name: 'marks_-1' },
+  { v: 2, key: { city: 1, course: 1 }, name: 'city_course_idx' },
+  { v: 2, key: { course: 1, marks: -1 }, name: 'course_marks_idx' },
+  { v: 2, key: { skills: 1 }, name: 'skills_idx' },
+  { v: 2, key: { age: 1 }, name: 'age_test_idx', hidden: true }
+]
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students
+|   .explain("executionStats")
+|   .find({ age: 20 })
+{
+  explainVersion: '1',
+  queryPlanner: {
+    namespace: 'mongodb_index_lab.students',
+    parsedQuery: { age: { '$eq': 20 } },
+    indexFilterSet: false,
+    queryHash: '317D2EA6',
+    planCacheShapeHash: '317D2EA6',
+    planCacheKey: '40750CC4',
+    optimizationTimeMillis: 0,
+    maxIndexedOrSolutionsReached: false,
+    maxIndexedAndSolutionsReached: false,
+    maxScansToExplodeReached: false,
+    prunedSimilarIndexes: false,
+    winningPlan: {
+      isCached: false,
+      stage: 'COLLSCAN',
+      filter: { age: { '$eq': 20 } },
+      direction: 'forward'
+    },
+    rejectedPlans: []
+  },
+  executionStats: {
+    executionSuccess: true,
+    nReturned: 0,
+    executionTimeMillis: 0,
+    totalKeysExamined: 0,
+    totalDocsExamined: 0,
+    executionStages: {
+      isCached: false,
+      stage: 'COLLSCAN',
+      filter: { age: { '$eq': 20 } },
+      nReturned: 0,
+      executionTimeMillisEstimate: 0,
+      works: 1,
+      advanced: 0,
+      needTime: 0,
+      needYield: 0,
+      saveState: 0,
+      restoreState: 0,
+      isEOF: 1,
+      direction: 'forward',
+      docsExamined: 0
+    }
+  },
+  queryShapeHash: 'A52345ABC6B614E192CB330FD9FD5D5EEB0D797ED0E725AE7A5272BA93DA669A',
+  command: { find: 'students', filter: { age: 20 }, '$db': 'mongodb_index_lab' },
+  serverInfo: {
+    host: 'ac-0wxjxgv-shard-00-01.aak7tqx.mongodb.net',
+    port: 27017,
+    version: '8.0.34',
+    gitVersion: '51db4515a6597aedcf6188ee4e48a27e65b065ae'
+  },
+  serverParameters: {
+    internalQueryFacetBufferSizeBytes: 104857600,
+    internalQueryFacetMaxOutputDocSizeBytes: 104857600,
+    internalLookupStageIntermediateDocumentMaxSizeBytes: 16793600,
+    internalDocumentSourceGroupMaxMemoryBytes: 104857600,
+    internalQueryMaxBlockingSortMemoryUsageBytes: 33554432,
+    internalQueryProhibitBlockingMergeOnMongoS: 0,
+    internalQueryMaxAddToSetBytes: 104857600,
+    internalDocumentSourceSetWindowFieldsMaxMemoryBytes: 104857600,
+    internalQueryFrameworkControl: 'trySbeRestricted',
+    internalQueryPlannerIgnoreIndexWithCollationForRegex: 1
+  },
+  ok: 1,
+  '$clusterTime': {
+    clusterTime: Timestamp({ t: 1793070748, i: 60 }),
+    signature: {
+      hash: Binary.createFromBase64('AlPWeyoI2dQ5sQxRYBtlY5YGQCw=', 0),
+      keyId: Long('7647247355665711112')
+    }
+  },
+  operationTime: Timestamp({ t: 1793070748, i: 60 })
+}
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students.unhideIndex("age_test_idx")
+{
+  hidden_old: true,
+  hidden_new: false,
+  ok: 1,
+  '$clusterTime': {
+    clusterTime: Timestamp({ t: 1793070752, i: 44 }),
+    signature: {
+      hash: Binary.createFromBase64('OnTsxaC0EqrotC5dbb2nl21uzIs=', 0),
+      keyId: Long('7647247355665711112')
+    }
+  },
+  operationTime: Timestamp({ t: 1793070752, i: 44 })
+}
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students.getIndexes()
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { name: 1 }, name: 'name_1' },
+  { v: 2, key: { marks: -1 }, name: 'marks_-1' },
+  { v: 2, key: { city: 1, course: 1 }, name: 'city_course_idx' },
+  { v: 2, key: { course: 1, marks: -1 }, name: 'course_marks_idx' },
+  { v: 2, key: { skills: 1 }, name: 'skills_idx' },
+  { v: 2, key: { age: 1 }, name: 'age_test_idx' }
+]
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students.createIndex(
+|   { city: 1 },
+|   { unique: true, name: "unique_city_test" }
+| )
+unique_city_test
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.index_error_lab.drop()
+|
+| db.index_error_lab.insertMany([
+|   { email: "rahul@example.com" },
+|   { email: "priya@example.com" }
+| ])
+|
+| db.index_error_lab.createIndex(
+|   { email: 1 },
+|   { unique: true, name: "unique_email_idx" }
+| )
+unique_email_idx
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.index_error_lab.insertOne({
+|   email: "rahul@example.com"
+| })
+MongoServerError: E11000 duplicate key error collection: mongodb_index_lab.index_error_lab index: unique_email_idx dup key: { email: "rahul@example.com" }
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students.createIndex(
+|   { name: 1 },
+|   { unique: "yes" }
+| )
+MongoServerError[TypeMismatch]: Error in specification { unique: "yes", name: "name_1", key: { name: 1 } } :: caused by :: The field 'unique has value unique: "yes", which is not convertible to bool
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> try {
+|   db.index_error_lab.createIndex(
+|     { email: 1 },
+|     { unique: true, name: "unique_email_idx" }
+|   )
+| } catch (error) {
+|   print("Index error: " + error.message)
+| }
+unique_email_idx
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students.find({ name: "Rahul" })
+|   .hint({ name: 1 })
+|   .explain("executionStats")
+{
+  explainVersion: '1',
+  queryPlanner: {
+    namespace: 'mongodb_index_lab.students',
+    parsedQuery: { name: { '$eq': 'Rahul' } },
+    indexFilterSet: false,
+    queryHash: '544F3E5C',
+    planCacheShapeHash: '544F3E5C',
+    planCacheKey: 'EEE0759C',
+    optimizationTimeMillis: 0,
+    maxIndexedOrSolutionsReached: false,
+    maxIndexedAndSolutionsReached: false,
+    maxScansToExplodeReached: false,
+    prunedSimilarIndexes: false,
+    winningPlan: {
+      isCached: false,
+      stage: 'FETCH',
+      inputStage: {
+        stage: 'IXSCAN',
+        keyPattern: { name: 1 },
+        indexName: 'name_1',
+        isMultiKey: false,
+        multiKeyPaths: { name: [] },
+        isUnique: false,
+        isSparse: false,
+        isPartial: false,
+        indexVersion: 2,
+        direction: 'forward',
+        indexBounds: { name: [ '["Rahul", "Rahul"]' ] }
+      }
+    },
+    rejectedPlans: []
+  },
+  executionStats: {
+    executionSuccess: true,
+    nReturned: 0,
+    executionTimeMillis: 0,
+    totalKeysExamined: 0,
+    totalDocsExamined: 0,
+    executionStages: {
+      isCached: false,
+      stage: 'FETCH',
+      nReturned: 0,
+      executionTimeMillisEstimate: 0,
+      works: 1,
+      advanced: 0,
+      needTime: 0,
+      needYield: 0,
+      saveState: 0,
+      restoreState: 0,
+      isEOF: 1,
+      docsExamined: 0,
+      alreadyHasObj: 0,
+      inputStage: {
+        stage: 'IXSCAN',
+        nReturned: 0,
+        executionTimeMillisEstimate: 0,
+        works: 1,
+        advanced: 0,
+        needTime: 0,
+        needYield: 0,
+        saveState: 0,
+        restoreState: 0,
+        isEOF: 1,
+        keyPattern: { name: 1 },
+        indexName: 'name_1',
+        isMultiKey: false,
+        multiKeyPaths: { name: [] },
+        isUnique: false,
+        isSparse: false,
+        isPartial: false,
+        indexVersion: 2,
+        direction: 'forward',
+        indexBounds: { name: [ '["Rahul", "Rahul"]' ] },
+        keysExamined: 0,
+        seeks: 1,
+        dupsTested: 0,
+        dupsDropped: 0
+      }
+    }
+  },
+  queryShapeHash: 'B20D182C5968B565500026542909DEB06CD7BE4AC652E9D5C8905C218771C02D',
+  command: {
+    find: 'students',
+    filter: { name: 'Rahul' },
+    hint: { name: 1 },
+    '$db': 'mongodb_index_lab'
+  },
+  serverInfo: {
+    host: 'ac-0wxjxgv-shard-00-01.aak7tqx.mongodb.net',
+    port: 27017,
+    version: '8.0.34',
+    gitVersion: '51db4515a6597aedcf6188ee4e48a27e65b065ae'
+  },
+  serverParameters: {
+    internalQueryFacetBufferSizeBytes: 104857600,
+    internalQueryFacetMaxOutputDocSizeBytes: 104857600,
+    internalLookupStageIntermediateDocumentMaxSizeBytes: 16793600,
+    internalDocumentSourceGroupMaxMemoryBytes: 104857600,
+    internalQueryMaxBlockingSortMemoryUsageBytes: 33554432,
+    internalQueryProhibitBlockingMergeOnMongoS: 0,
+    internalQueryMaxAddToSetBytes: 104857600,
+    internalDocumentSourceSetWindowFieldsMaxMemoryBytes: 104857600,
+    internalQueryFrameworkControl: 'trySbeRestricted',
+    internalQueryPlannerIgnoreIndexWithCollationForRegex: 1
+  },
+  ok: 1,
+  '$clusterTime': {
+    clusterTime: Timestamp({ t: 1793070807, i: 48 }),
+    signature: {
+      hash: Binary.createFromBase64('K/pBKFd+L9mMGMRgqggm5uqAKs4=', 0),
+      keyId: Long('7647247355665711112')
+    }
+  },
+  operationTime: Timestamp({ t: 1793070807, i: 48 })
+}
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> // Normal query
+| db.students
+|   .find({ name: "Rahul" })
+|   .explain("executionStats")
+|
+| // Test without indexes (except the mandatory _id index)
+| db.students
+|   .find({ name: "Rahul" })
+|   .hint({ $natural: 1 })
+|   .explain("executionStats")
+{
+  explainVersion: '1',
+  queryPlanner: {
+    namespace: 'mongodb_index_lab.students',
+    parsedQuery: { name: { '$eq': 'Rahul' } },
+    indexFilterSet: false,
+    queryHash: '544F3E5C',
+    planCacheShapeHash: '544F3E5C',
+    planCacheKey: 'EEE0759C',
+    optimizationTimeMillis: 0,
+    maxIndexedOrSolutionsReached: false,
+    maxIndexedAndSolutionsReached: false,
+    maxScansToExplodeReached: false,
+    prunedSimilarIndexes: false,
+    winningPlan: {
+      isCached: false,
+      stage: 'COLLSCAN',
+      filter: { name: { '$eq': 'Rahul' } },
+      direction: 'forward'
+    },
+    rejectedPlans: []
+  },
+  executionStats: {
+    executionSuccess: true,
+    nReturned: 0,
+    executionTimeMillis: 0,
+    totalKeysExamined: 0,
+    totalDocsExamined: 0,
+    executionStages: {
+      isCached: false,
+      stage: 'COLLSCAN',
+      filter: { name: { '$eq': 'Rahul' } },
+      nReturned: 0,
+      executionTimeMillisEstimate: 0,
+      works: 1,
+      advanced: 0,
+      needTime: 0,
+      needYield: 0,
+      saveState: 0,
+      restoreState: 0,
+      isEOF: 1,
+      direction: 'forward',
+      docsExamined: 0
+    }
+  },
+  queryShapeHash: 'B20D182C5968B565500026542909DEB06CD7BE4AC652E9D5C8905C218771C02D',
+  command: {
+    find: 'students',
+    filter: { name: 'Rahul' },
+    hint: { '$natural': 1 },
+    '$db': 'mongodb_index_lab'
+  },
+  serverInfo: {
+    host: 'ac-0wxjxgv-shard-00-01.aak7tqx.mongodb.net',
+    port: 27017,
+    version: '8.0.34',
+    gitVersion: '51db4515a6597aedcf6188ee4e48a27e65b065ae'
+  },
+  serverParameters: {
+    internalQueryFacetBufferSizeBytes: 104857600,
+    internalQueryFacetMaxOutputDocSizeBytes: 104857600,
+    internalLookupStageIntermediateDocumentMaxSizeBytes: 16793600,
+    internalDocumentSourceGroupMaxMemoryBytes: 104857600,
+    internalQueryMaxBlockingSortMemoryUsageBytes: 33554432,
+    internalQueryProhibitBlockingMergeOnMongoS: 0,
+    internalQueryMaxAddToSetBytes: 104857600,
+    internalDocumentSourceSetWindowFieldsMaxMemoryBytes: 104857600,
+    internalQueryFrameworkControl: 'trySbeRestricted',
+    internalQueryPlannerIgnoreIndexWithCollationForRegex: 1
+  },
+  ok: 1,
+  '$clusterTime': {
+    clusterTime: Timestamp({ t: 1793070812, i: 23 }),
+    signature: {
+      hash: Binary.createFromBase64('+Lw8AuLTq4xUrn0iEnKYhc8cGQ0=', 0),
+      keyId: Long('7647247355665711112')
+    }
+  },
+  operationTime: Timestamp({ t: 1793070812, i: 23 })
+}
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students.createIndex(
+|   { course: 1, marks: -1 },
+|   { name: "course_marks_optimized" }
+| )
+MongoServerError[IndexOptionsConflict]: Index already exists with a different name: course_marks_idx
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students
+|   .find({
+|     course: "BCA",
+|     marks: { $gte: 80 }
+|   })
+|   .sort({ marks: -1 })
+|   .explain("executionStats")
+{
+  explainVersion: '1',
+  queryPlanner: {
+    namespace: 'mongodb_index_lab.students',
+    parsedQuery: {
+      '$and': [ { course: { '$eq': 'BCA' } }, { marks: { '$gte': 80 } } ]
+    },
+    indexFilterSet: false,
+    queryHash: '3C9E10F6',
+    planCacheShapeHash: '3C9E10F6',
+    planCacheKey: '3BECDF31',
+    optimizationTimeMillis: 0,
+    maxIndexedOrSolutionsReached: false,
+    maxIndexedAndSolutionsReached: false,
+    maxScansToExplodeReached: false,
+    prunedSimilarIndexes: false,
+    winningPlan: {
+      isCached: false,
+      stage: 'FETCH',
+      inputStage: {
+        stage: 'IXSCAN',
+        keyPattern: { course: 1, marks: -1 },
+        indexName: 'course_marks_idx',
+        isMultiKey: false,
+        multiKeyPaths: { course: [], marks: [] },
+        isUnique: false,
+        isSparse: false,
+        isPartial: false,
+        indexVersion: 2,
+        direction: 'forward',
+        indexBounds: { course: [ '["BCA", "BCA"]' ], marks: [ '[inf.0, 80]' ] }
+      }
+    },
+    rejectedPlans: [
+      {
+        isCached: false,
+        stage: 'FETCH',
+        filter: { course: { '$eq': 'BCA' } },
+        inputStage: {
+          stage: 'IXSCAN',
+          keyPattern: { marks: -1 },
+          indexName: 'marks_-1',
+          isMultiKey: false,
+          multiKeyPaths: { marks: [] },
+          isUnique: false,
+          isSparse: false,
+          isPartial: false,
+          indexVersion: 2,
+          direction: 'forward',
+          indexBounds: { marks: [ '[inf.0, 80]' ] }
+        }
+      }
+    ]
+  },
+  executionStats: {
+    executionSuccess: true,
+    nReturned: 0,
+    executionTimeMillis: 0,
+    totalKeysExamined: 0,
+    totalDocsExamined: 0,
+    executionStages: {
+      isCached: false,
+      stage: 'FETCH',
+      nReturned: 0,
+      executionTimeMillisEstimate: 0,
+      works: 2,
+      advanced: 0,
+      needTime: 0,
+      needYield: 0,
+      saveState: 0,
+      restoreState: 0,
+      isEOF: 1,
+      docsExamined: 0,
+      alreadyHasObj: 0,
+      inputStage: {
+        stage: 'IXSCAN',
+        nReturned: 0,
+        executionTimeMillisEstimate: 0,
+        works: 1,
+        advanced: 0,
+        needTime: 0,
+        needYield: 0,
+        saveState: 0,
+        restoreState: 0,
+        isEOF: 1,
+        keyPattern: { course: 1, marks: -1 },
+        indexName: 'course_marks_idx',
+        isMultiKey: false,
+        multiKeyPaths: { course: [], marks: [] },
+        isUnique: false,
+        isSparse: false,
+        isPartial: false,
+        indexVersion: 2,
+        direction: 'forward',
+        indexBounds: { course: [ '["BCA", "BCA"]' ], marks: [ '[inf.0, 80]' ] },
+        keysExamined: 0,
+        seeks: 1,
+        dupsTested: 0,
+        dupsDropped: 0
+      }
+    }
+  },
+  queryShapeHash: '17721E11C4B098A48853D5765FF446B08C52AAF741C22310375D91E2A0E05292',
+  command: {
+    find: 'students',
+    filter: { course: 'BCA', marks: { '$gte': 80 } },
+    sort: { marks: -1 },
+    '$db': 'mongodb_index_lab'
+  },
+  serverInfo: {
+    host: 'ac-0wxjxgv-shard-00-01.aak7tqx.mongodb.net',
+    port: 27017,
+    version: '8.0.34',
+    gitVersion: '51db4515a6597aedcf6188ee4e48a27e65b065ae'
+  },
+  serverParameters: {
+    internalQueryFacetBufferSizeBytes: 104857600,
+    internalQueryFacetMaxOutputDocSizeBytes: 104857600,
+    internalLookupStageIntermediateDocumentMaxSizeBytes: 16793600,
+    internalDocumentSourceGroupMaxMemoryBytes: 104857600,
+    internalQueryMaxBlockingSortMemoryUsageBytes: 33554432,
+    internalQueryProhibitBlockingMergeOnMongoS: 0,
+    internalQueryMaxAddToSetBytes: 104857600,
+    internalDocumentSourceSetWindowFieldsMaxMemoryBytes: 104857600,
+    internalQueryFrameworkControl: 'trySbeRestricted',
+    internalQueryPlannerIgnoreIndexWithCollationForRegex: 1
+  },
+  ok: 1,
+  '$clusterTime': {
+    clusterTime: Timestamp({ t: 1793070823, i: 53 }),
+    signature: {
+      hash: Binary.createFromBase64('yLzcN6N5t+TZJnpTnvLdb3fWlo8=', 0),
+      keyId: Long('7647247355665711112')
+    }
+  },
+  operationTime: Timestamp({ t: 1793070823, i: 53 })
+}
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students.createIndex(
+|   { marks: -1, course: 1 },
+|   { name: "marks_course_alternative" }
+| )
+marks_course_alternative
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> db.students
+|   .find({
+|     course: "BCA",
+|     marks: { $gte: 80 }
+|   })
+|   .sort({ marks: -1 })
+|   .explain("executionStats")
+{
+  explainVersion: '1',
+  queryPlanner: {
+    namespace: 'mongodb_index_lab.students',
+    parsedQuery: {
+      '$and': [ { course: { '$eq': 'BCA' } }, { marks: { '$gte': 80 } } ]
+    },
+    indexFilterSet: false,
+    queryHash: '3C9E10F6',
+    planCacheShapeHash: '3C9E10F6',
+    planCacheKey: 'EEBB9711',
+    optimizationTimeMillis: 0,
+    maxIndexedOrSolutionsReached: false,
+    maxIndexedAndSolutionsReached: false,
+    maxScansToExplodeReached: false,
+    prunedSimilarIndexes: false,
+    winningPlan: {
+      isCached: false,
+      stage: 'FETCH',
+      inputStage: {
+        stage: 'IXSCAN',
+        keyPattern: { course: 1, marks: -1 },
+        indexName: 'course_marks_idx',
+        isMultiKey: false,
+        multiKeyPaths: { course: [], marks: [] },
+        isUnique: false,
+        isSparse: false,
+        isPartial: false,
+        indexVersion: 2,
+        direction: 'forward',
+        indexBounds: { course: [ '["BCA", "BCA"]' ], marks: [ '[inf.0, 80]' ] }
+      }
+    },
+    rejectedPlans: [
+      {
+        isCached: false,
+        stage: 'FETCH',
+        filter: { course: { '$eq': 'BCA' } },
+        inputStage: {
+          stage: 'IXSCAN',
+          keyPattern: { marks: -1 },
+          indexName: 'marks_-1',
+          isMultiKey: false,
+          multiKeyPaths: { marks: [] },
+          isUnique: false,
+          isSparse: false,
+          isPartial: false,
+          indexVersion: 2,
+          direction: 'forward',
+          indexBounds: { marks: [ '[inf.0, 80]' ] }
+        }
+      },
+      {
+        isCached: false,
+        stage: 'FETCH',
+        inputStage: {
+          stage: 'IXSCAN',
+          keyPattern: { marks: -1, course: 1 },
+          indexName: 'marks_course_alternative',
+          isMultiKey: false,
+          multiKeyPaths: { marks: [], course: [] },
+          isUnique: false,
+          isSparse: false,
+          isPartial: false,
+          indexVersion: 2,
+          direction: 'forward',
+          indexBounds: { marks: [ '[inf.0, 80]' ], course: [ '["BCA", "BCA"]' ] }
+        }
+      }
+    ]
+  },
+  executionStats: {
+    executionSuccess: true,
+    nReturned: 0,
+    executionTimeMillis: 0,
+    totalKeysExamined: 0,
+    totalDocsExamined: 0,
+    executionStages: {
+      isCached: false,
+      stage: 'FETCH',
+      nReturned: 0,
+      executionTimeMillisEstimate: 0,
+      works: 2,
+      advanced: 0,
+      needTime: 0,
+      needYield: 0,
+      saveState: 0,
+      restoreState: 0,
+      isEOF: 1,
+      docsExamined: 0,
+      alreadyHasObj: 0,
+      inputStage: {
+        stage: 'IXSCAN',
+        nReturned: 0,
+        executionTimeMillisEstimate: 0,
+        works: 1,
+        advanced: 0,
+        needTime: 0,
+        needYield: 0,
+        saveState: 0,
+        restoreState: 0,
+        isEOF: 1,
+        keyPattern: { course: 1, marks: -1 },
+        indexName: 'course_marks_idx',
+        isMultiKey: false,
+        multiKeyPaths: { course: [], marks: [] },
+        isUnique: false,
+        isSparse: false,
+        isPartial: false,
+        indexVersion: 2,
+        direction: 'forward',
+        indexBounds: { course: [ '["BCA", "BCA"]' ], marks: [ '[inf.0, 80]' ] },
+        keysExamined: 0,
+        seeks: 1,
+        dupsTested: 0,
+        dupsDropped: 0
+      }
+    }
+  },
+  queryShapeHash: '17721E11C4B098A48853D5765FF446B08C52AAF741C22310375D91E2A0E05292',
+  command: {
+    find: 'students',
+    filter: { course: 'BCA', marks: { '$gte': 80 } },
+    sort: { marks: -1 },
+    '$db': 'mongodb_index_lab'
+  },
+  serverInfo: {
+    host: 'ac-0wxjxgv-shard-00-01.aak7tqx.mongodb.net',
+    port: 27017,
+    version: '8.0.34',
+    gitVersion: '51db4515a6597aedcf6188ee4e48a27e65b065ae'
+  },
+  serverParameters: {
+    internalQueryFacetBufferSizeBytes: 104857600,
+    internalQueryFacetMaxOutputDocSizeBytes: 104857600,
+    internalLookupStageIntermediateDocumentMaxSizeBytes: 16793600,
+    internalDocumentSourceGroupMaxMemoryBytes: 104857600,
+    internalQueryMaxBlockingSortMemoryUsageBytes: 33554432,
+    internalQueryProhibitBlockingMergeOnMongoS: 0,
+    internalQueryMaxAddToSetBytes: 104857600,
+    internalDocumentSourceSetWindowFieldsMaxMemoryBytes: 104857600,
+    internalQueryFrameworkControl: 'trySbeRestricted',
+    internalQueryPlannerIgnoreIndexWithCollationForRegex: 1
+  },
+  ok: 1,
+  '$clusterTime': {
+    clusterTime: Timestamp({ t: 1793070834, i: 7 }),
+    signature: {
+      hash: Binary.createFromBase64('1Z8X8LlTBMgXLfRVluPgavINUD8=', 0),
+      keyId: Long('7647247355665711112')
+    }
+  },
+  operationTime: Timestamp({ t: 1793070834, i: 7 })
+}
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab> // Check database
+| db
+|
+| // Check sample records
+| db.students.countDocuments()
+|
+| // Review indexes
+| db.students.getIndexes()
+|
+| // Review index sizes
+| db.students.stats().indexSizes
+|
+| // Review index usage statistics
+| db.students.aggregate([
+|   { $indexStats: {} }
+| ])
+[
+  {
+    name: 'marks_-1',
+    key: { marks: -1 },
+    accesses: { ops: Long('1'), since: ISODate('2026-10-27T03:09:43.457Z') },
+    host: 'ac-0wxjxgv-shard-00-01.aak7tqx.mongodb.net:27017'
+  },
+  {
+    name: 'course_marks_idx',
+    key: { course: 1, marks: -1 },
+    accesses: { ops: Long('1'), since: ISODate('2026-10-27T03:10:15.069Z') },
+    host: 'ac-0wxjxgv-shard-00-01.aak7tqx.mongodb.net:27017'
+  },
+  {
+    name: 'age_test_idx',
+    key: { age: 1 },
+    accesses: { ops: Long('0'), since: ISODate('2026-10-27T03:12:32.797Z') },
+    host: 'ac-0wxjxgv-shard-00-01.aak7tqx.mongodb.net:27017'
+  },
+  {
+    name: 'skills_idx',
+    key: { skills: 1 },
+    accesses: { ops: Long('2'), since: ISODate('2026-10-27T03:10:24.156Z') },
+    host: 'ac-0wxjxgv-shard-00-01.aak7tqx.mongodb.net:27017'
+  },
+  {
+    name: 'unique_city_test',
+    key: { city: 1 },
+    accesses: { ops: Long('0'), since: ISODate('2026-10-27T03:12:46.163Z') },
+    host: 'ac-0wxjxgv-shard-00-01.aak7tqx.mongodb.net:27017'
+  },
+  {
+    name: 'city_course_idx',
+    key: { city: 1, course: 1 },
+    accesses: { ops: Long('1'), since: ISODate('2026-10-27T03:09:57.025Z') },
+    host: 'ac-0wxjxgv-shard-00-01.aak7tqx.mongodb.net:27017'
+  },
+  {
+    name: 'name_1',
+    key: { name: 1 },
+    accesses: { ops: Long('1'), since: ISODate('2026-10-27T03:09:32.844Z') },
+    host: 'ac-0wxjxgv-shard-00-01.aak7tqx.mongodb.net:27017'
+  },
+  {
+    name: '_id_',
+    key: { _id: 1 },
+    accesses: { ops: Long('0'), since: ISODate('2026-10-27T03:09:32.837Z') },
+    host: 'ac-0wxjxgv-shard-00-01.aak7tqx.mongodb.net:27017'
+  },
+  {
+    name: 'marks_course_alternative',
+    key: { marks: -1, course: 1 },
+    accesses: { ops: Long('0'), since: ISODate('2026-10-27T03:13:50.257Z') },
+    host: 'ac-0wxjxgv-shard-00-01.aak7tqx.mongodb.net:27017'
+  }
+]
+Atlas atlas-73fkh6-shard-0 [primary] mongodb_index_lab>

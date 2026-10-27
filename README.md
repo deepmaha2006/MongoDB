@@ -13,7 +13,8 @@ A collection of practical MongoDB operations, queries, and class work logs condu
 - [`CRT-1/MongoDB Class - Thursday Work Log.txt`](./CRT-1/MongoDB%20Class%20-%20Thursday%20Work%20Log.txt) — Shell session covering indexing and query performance analysis.
 
 ### 📂 CRT-2 — Class Round 2
-- [`CRT-2/MongoDB Class - Tuesday Work Log.txt`](./CRT-2/MongoDB%20Class%20-%20Tuesday%20Work%20Log.txt) — Shell session covering advanced indexing: compound indexes, multikey indexes, hidden indexes, unique indexes, `explain()` analysis, and index statistics.
+- [`CRT-2/MongoDB Class - Monday Work Log.txt`](./CRT-2/MongoDB%20Class%20-%20Monday%20Work%20Log.txt) — Shell session covering advanced indexing: compound indexes, multikey indexes, hidden indexes, unique indexes, `explain()` analysis, and index statistics.
+- [`CRT-2/MongoDB Class - Tuesday Work Log.txt`](./CRT-2/MongoDB%20Class%20-%20Tuesday%20Work%20Log.txt) — Shell session covering replication: replica set topology, `rs.status()`, read preferences, and write concerns.
 
 ### 📂 Banking Transaction Project
 - [`Banking Transaction Project/`](./Banking%20Transaction%20Project) — Full-stack Node.js + Express + MongoDB banking system built using these concepts, deployed live on Render.
@@ -60,6 +61,13 @@ A collection of practical MongoDB operations, queries, and class work logs condu
 - **Compound Indexes**: Creating indexes across multiple fields
 - **Query Plan Analysis**: `db.product.find({...}).explain("executionStats")` to compare scan efficiency with and without an index
 - **Index Cleanup**: `db.product.dropIndex("price_1")`
+
+### 7. Replication & High Availability (CRT-2)
+- **Replica Set Topology**: `db.adminCommand({ hellhello: 1 })` to inspect primary, hosts, and `isWritablePrimary`
+- **Replica Set Status**: `rs.status()` to check member states (PRIMARY / SECONDARY), uptime, and sync source
+- **Read Preferences**: `.readPref("primary")`, `.readPref("secondaryPreferred")`, `.readPref("nearest")` for routing reads
+- **Write Concerns**: `{ w: 1 }` (primary only), `{ w: "majority" }` (majority of nodes), with optional `wtimeout`
+- **Replication Lab**: Insert and read documents across replica set members using `replication_lab` database
 
 ### 6. Advanced Indexing & Index Management (CRT-2)
 - **Single & Compound Indexes**: `createIndex({ name: 1 })`, `createIndex({ city: 1, course: 1 })`, `createIndex({ course: 1, marks: -1 })`
