@@ -1,9 +1,5 @@
-PS C:\Windows\system32> mongosh "mongodb+srv://deepeshonwork_db_user:YOUR_PASSWORD@cluster0.aak7tqx.mongodb.net/"
-Current Mongosh Log ID: 6ae01531125ae96faf14379c
-Connecting to:          mongodb+srv://<credentials>@cluster0.aak7tqx.mongodb.net/?appName=mongosh+2.10.0
-MongoServerError: bad auth : authentication failed
 PS C:\Windows\system32> mongosh "mongodb+srv://deepeshonwork_db_user:tGS1jmor1ThcZLxA@cluster0.aak7tqx.mongodb.net/"
-Current Mongosh Log ID: 6ae01547e8377a1e1af8e11f
+Current Mongosh Log ID: ************************
 Connecting to:          mongodb+srv://<credentials>@cluster0.aak7tqx.mongodb.net/?appName=mongosh+2.10.0
 Using MongoDB:          8.0.34
 Using Mongosh:          2.10.0
