@@ -15,6 +15,8 @@ A collection of practical MongoDB operations, queries, and class work logs condu
 ### 📂 CRT-2 — Class Round 2
 - [`CRT-2/MongoDB Class - Monday Work Log.txt`](./CRT-2/MongoDB%20Class%20-%20Monday%20Work%20Log.txt) — Shell session covering advanced indexing: compound indexes, multikey indexes, hidden indexes, unique indexes, `explain()` analysis, and index statistics.
 - [`CRT-2/MongoDB Class - Tuesday Work Log.txt`](./CRT-2/MongoDB%20Class%20-%20Tuesday%20Work%20Log.txt) — Shell session covering replication: replica set topology, `rs.status()`, read preferences, and write concerns.
+- [`CRT-2/MongoDB Class - Wednesday Work Log (MongoDB Shell).txt`](./CRT-2/MongoDB%20Class%20-%20Wednesday%20Work%20Log%20(MongoDB%20Shell).txt) — Shell session covering StudentDB setup, CRUD operations (`insertMany`, `updateOne`, `updateMany`), index creation with `explain()` analysis, and aggregation pipeline using `$group`, `$lookup`, `$unwind`, and `$project`.
+- [`CRT-2/MongoDB Class - Wednesday Work Log (PowerShell Backup).txt`](./CRT-2/MongoDB%20Class%20-%20Wednesday%20Work%20Log%20(PowerShell%20Backup).txt) — PowerShell session covering secure credential handling, `mongodump` backup to local `.bson` files, and `mongorestore` with `--drop` to restore the StudentDB collection.
 
 ### 📂 Banking Transaction Project
 - [`Banking Transaction Project/`](./Banking%20Transaction%20Project) — Full-stack Node.js + Express + MongoDB banking system built using these concepts, deployed live on Render.
@@ -62,14 +64,14 @@ A collection of practical MongoDB operations, queries, and class work logs condu
 - **Query Plan Analysis**: `db.product.find({...}).explain("executionStats")` to compare scan efficiency with and without an index
 - **Index Cleanup**: `db.product.dropIndex("price_1")`
 
-### 7. Replication & High Availability (CRT-2)
+### 6. Replication & High Availability (CRT-2)
 - **Replica Set Topology**: `db.adminCommand({ hellhello: 1 })` to inspect primary, hosts, and `isWritablePrimary`
 - **Replica Set Status**: `rs.status()` to check member states (PRIMARY / SECONDARY), uptime, and sync source
 - **Read Preferences**: `.readPref("primary")`, `.readPref("secondaryPreferred")`, `.readPref("nearest")` for routing reads
 - **Write Concerns**: `{ w: 1 }` (primary only), `{ w: "majority" }` (majority of nodes), with optional `wtimeout`
 - **Replication Lab**: Insert and read documents across replica set members using `replication_lab` database
 
-### 6. Advanced Indexing & Index Management (CRT-2)
+### 7. Advanced Indexing & Index Management (CRT-2)
 - **Single & Compound Indexes**: `createIndex({ name: 1 })`, `createIndex({ city: 1, course: 1 })`, `createIndex({ course: 1, marks: -1 })`
 - **Multikey Indexes**: Indexing array fields (`skills`) for element-level queries
 - **Hidden Indexes**: `hideIndex()` / `unhideIndex()` to test index removal impact without dropping
@@ -78,6 +80,13 @@ A collection of practical MongoDB operations, queries, and class work logs condu
 - **Index Hints**: Forcing a specific index with `.hint({ name: 1 })` and `.hint({ $natural: 1 })`
 - **Index Statistics**: `db.students.aggregate([{ $indexStats: {} }])` to track usage per index
 - **Index Naming & Conflicts**: Custom index names, and `IndexOptionsConflict` error when re-creating with different options
+
+### 8. Backup & Restore with mongodump / mongorestore (CRT-2 Wednesday)
+- **Secure Credential Handling**: `Read-Host -AsSecureString` combined with `[System.Net.NetworkCredential]` to safely extract the password for CLI use, then `Remove-Variable` to wipe it from memory
+- **mongodump**: `mongodump --uri --username --password --db --out` to export a full database to local `.bson` and `.metadata.json` files
+- **Backup Verification**: `Get-ChildItem` to inspect the exported file structure (`courses.bson`, `students.bson`, index metadata)
+- **mongorestore**: `mongorestore --db --drop` to drop existing collections and restore from the backup directory, including index definitions
+- **StudentDB Practice**: Created `students` and `courses` collections, ran CRUD operations, created unique and foreign-key-style indexes, and ran a multi-stage aggregation (`$group` → `$lookup` → `$unwind` → `$project`)
 
 ---
 

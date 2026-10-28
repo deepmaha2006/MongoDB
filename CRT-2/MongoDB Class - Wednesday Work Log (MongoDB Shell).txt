@@ -1,0 +1,418 @@
+PS C:\Windows\system32> mongosh "mongodb+srv://cluster0.aak7tqx.mongodb.net/" --username "deepeshonwork_db_user"
+Enter password: ****************
+Current Mongosh Log ID: 6ae1ad0d7c9826d4a1aa3559
+Connecting to:          mongodb+srv://<credentials>@cluster0.aak7tqx.mongodb.net/?appName=mongosh+2.14.0
+Using MongoDB:          8.0.34
+Using Mongosh:          2.14.0
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+Atlas atlas-73fkh6-shard-0 [primary] test> use StudentDB
+switched to db StudentDB
+Atlas atlas-73fkh6-shard-0 [primary] StudentDB> db.dropDatabase()
+{ ok: 1, dropped: 'StudentDB' }
+Atlas atlas-73fkh6-shard-0 [primary] StudentDB> show dbs
+BankingTransaction     288.00 KiB
+MongoDB-S2             160.00 KiB
+StudentDB_Restored      40.00 KiB
+ai_interview_platform  332.00 KiB
+banking                208.00 KiB
+fdportal                 2.02 MiB
+mongodb_index_lab      148.00 KiB
+replication_lab         72.00 KiB
+sample_mflix           141.38 MiB
+admin                         0 B
+local                         0 B
+Atlas atlas-73fkh6-shard-0 [primary] StudentDB> use StudentDB
+already on db StudentDB
+Atlas atlas-73fkh6-shard-0 [primary] StudentDB> db.createCollection("students")
+{ ok: 1 }
+Atlas atlas-73fkh6-shard-0 [primary] StudentDB> db.createCollection("courses")
+{ ok: 1 }
+Atlas atlas-73fkh6-shard-0 [primary] StudentDB> show collections
+courses
+students
+Atlas atlas-73fkh6-shard-0 [primary] StudentDB> db.courses.insertMany([
+|   {
+|     _id: "CS101",
+|     courseName: "Computer Science",
+|     department: "Computer Applications",
+|     credits: 4
+|   },
+|   {
+|     _id: "DB101",
+|     courseName: "Database Management",
+|     department: "Computer Applications",
+|     credits: 3
+|   },
+|   {
+|     _id: "NW101",
+|     courseName: "Computer Networks",
+|     department: "Information Technology",
+|     credits: 4
+|   }
+| ])
+{
+  acknowledged: true,
+  insertedIds: { '0': 'CS101', '1': 'DB101', '2': 'NW101' }
+}
+Atlas atlas-73fkh6-shard-0 [primary] StudentDB> db.courses.find()
+[
+  {
+    _id: 'CS101',
+    courseName: 'Computer Science',
+    department: 'Computer Applications',
+    credits: 4
+  },
+  {
+    _id: 'DB101',
+    courseName: 'Database Management',
+    department: 'Computer Applications',
+    credits: 3
+  },
+  {
+    _id: 'NW101',
+    courseName: 'Computer Networks',
+    department: 'Information Technology',
+    credits: 4
+  }
+]
+Atlas atlas-73fkh6-shard-0 [primary] StudentDB> db.students.insertMany([
+|   {
+|     studentId: 101,
+|     name: "Rahul Sharma",
+|     age: 20,
+|     courseId: "CS101",
+|     marks: 85
+|   },
+|   {
+|     studentId: 102,
+|     name: "Amit Verma",
+|     age: 21,
+|     courseId: "CS101",
+|     marks: 78
+|   },
+|   {
+|     studentId: 103,
+|     name: "Priya Singh",
+|     age: 20,
+|     courseId: "DB101",
+|     marks: 92
+|   },
+|   {
+|     studentId: 104,
+|     name: "Neha Gupta",
+|     age: 22,
+|     courseId: "DB101",
+|     marks: 88
+|   },
+|   {
+|     studentId: 105,
+|     name: "Arjun Mehta",
+|     age: 21,
+|     courseId: "NW101",
+|     marks: 75
+|   },
+|   {
+|     studentId: 106,
+|     name: "Sneha Patel",
+|     age: 20,
+|     courseId: "NW101",
+|     marks: 95
+|   },
+|   {
+|     studentId: 107,
+|     name: "Vikram Joshi",
+|     age: 22,
+|     courseId: "CS101",
+|     marks: 81
+|   }
+| ])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('6ae1ad587c9826d4a1aa355a'),
+    '1': ObjectId('6ae1ad587c9826d4a1aa355b'),
+    '2': ObjectId('6ae1ad587c9826d4a1aa355c'),
+    '3': ObjectId('6ae1ad587c9826d4a1aa355d'),
+    '4': ObjectId('6ae1ad587c9826d4a1aa355e'),
+    '5': ObjectId('6ae1ad587c9826d4a1aa355f'),
+    '6': ObjectId('6ae1ad587c9826d4a1aa3560')
+  }
+}
+Atlas atlas-73fkh6-shard-0 [primary] StudentDB> // Display all students
+| db.students.find()
+|
+| // Display students in readable format
+| db.students.find().pretty()
+|
+| // Count total students
+| db.students.countDocuments()
+|
+| // Count total courses
+| db.courses.countDocuments()
+3
+Atlas atlas-73fkh6-shard-0 [primary] StudentDB> db.students.updateOne(
+|   { studentId: 101 },
+|   { $set: { marks: 90 } }
+| )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+Atlas atlas-73fkh6-shard-0 [primary] StudentDB> db.students.updateMany(
+|   { courseId: "CS101" },
+|   { $inc: { marks: 2 } }
+| )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 3,
+  modifiedCount: 3,
+  upsertedCount: 0
+}
+Atlas atlas-73fkh6-shard-0 [primary] StudentDB> db.students.find(
+|   {},
+|   { _id: 0, studentId: 1, name: 1, courseId: 1, marks: 1 }
+| ).sort({ studentId: 1 })
+[
+  { studentId: 101, name: 'Rahul Sharma', courseId: 'CS101', marks: 92 },
+  { studentId: 102, name: 'Amit Verma', courseId: 'CS101', marks: 80 },
+  { studentId: 103, name: 'Priya Singh', courseId: 'DB101', marks: 92 },
+  { studentId: 104, name: 'Neha Gupta', courseId: 'DB101', marks: 88 },
+  { studentId: 105, name: 'Arjun Mehta', courseId: 'NW101', marks: 75 },
+  { studentId: 106, name: 'Sneha Patel', courseId: 'NW101', marks: 95 },
+  { studentId: 107, name: 'Vikram Joshi', courseId: 'CS101', marks: 83 }
+]
+Atlas atlas-73fkh6-shard-0 [primary] StudentDB> // Update a specific student's marks
+| db.students.updateOne(
+|   { studentId: 103 },
+|   { $set: { marks: 95 } }
+| )
+|
+| // Find students with marks of 90 or more
+| db.students.find({ marks: { $gte: 90 } })
+|
+| // Find students whose marks are between 80 and 90
+| db.students.find({
+|   marks: { $gte: 80, $lte: 90 }
+| })
+[
+  {
+    _id: ObjectId('6ae1ad587c9826d4a1aa355b'),
+    studentId: 102,
+    name: 'Amit Verma',
+    age: 21,
+    courseId: 'CS101',
+    marks: 80
+  },
+  {
+    _id: ObjectId('6ae1ad587c9826d4a1aa355d'),
+    studentId: 104,
+    name: 'Neha Gupta',
+    age: 22,
+    courseId: 'DB101',
+    marks: 88
+  },
+  {
+    _id: ObjectId('6ae1ad587c9826d4a1aa3560'),
+    studentId: 107,
+    name: 'Vikram Joshi',
+    age: 22,
+    courseId: 'CS101',
+    marks: 83
+  }
+]
+Atlas atlas-73fkh6-shard-0 [primary] StudentDB> db.courses.createIndex(
+|   { courseName: 1 },
+|   { unique: true }
+| )
+courseName_1
+Atlas atlas-73fkh6-shard-0 [primary] StudentDB> db.students.createIndex({ courseId: 1 })
+courseId_1
+Atlas atlas-73fkh6-shard-0 [primary] StudentDB> db.courses.getIndexes()
+| db.students.getIndexes()
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { courseId: 1 }, name: 'courseId_1' }
+]
+Atlas atlas-73fkh6-shard-0 [primary] StudentDB> db.courses.find({
+|   courseName: "Database Management"
+| }).explain("executionStats")
+{
+  explainVersion: '1',
+  queryPlanner: {
+    namespace: 'StudentDB.courses',
+    parsedQuery: { courseName: { '$eq': 'Database Management' } },
+    indexFilterSet: false,
+    queryHash: 'FC7860A0',
+    planCacheShapeHash: 'FC7860A0',
+    planCacheKey: '03A8E5A2',
+    optimizationTimeMillis: 0,
+    maxIndexedOrSolutionsReached: false,
+    maxIndexedAndSolutionsReached: false,
+    maxScansToExplodeReached: false,
+    prunedSimilarIndexes: false,
+    winningPlan: {
+      isCached: false,
+      stage: 'EXPRESS_IXSCAN',
+      keyPattern: '{ courseName: 1 }',
+      indexName: 'courseName_1'
+    },
+    rejectedPlans: []
+  },
+  executionStats: {
+    executionSuccess: true,
+    nReturned: 1,
+    executionTimeMillis: 0,
+    totalKeysExamined: 1,
+    totalDocsExamined: 1,
+    executionStages: {
+      isCached: false,
+      stage: 'EXPRESS_IXSCAN',
+      keyPattern: '{ courseName: 1 }',
+      indexName: 'courseName_1',
+      keysExamined: 1,
+      docsExamined: 1,
+      nReturned: 1
+    }
+  },
+  queryShapeHash: '2100A31269F8D382DDB2AAD8294B3D7E4CF95A525E2CBA5F6D8E08CA5442C9C3',
+  command: {
+    find: 'courses',
+    filter: { courseName: 'Database Management' },
+    '$db': 'StudentDB'
+  },
+  serverInfo: {
+    host: 'ac-0wxjxgv-shard-00-01.aak7tqx.mongodb.net',
+    port: 27017,
+    version: '8.0.34',
+    gitVersion: '51db4515a6597aedcf6188ee4e48a27e65b065ae'
+  },
+  serverParameters: {
+    internalQueryFacetBufferSizeBytes: 104857600,
+    internalQueryFacetMaxOutputDocSizeBytes: 104857600,
+    internalLookupStageIntermediateDocumentMaxSizeBytes: 16793600,
+    internalDocumentSourceGroupMaxMemoryBytes: 104857600,
+    internalQueryMaxBlockingSortMemoryUsageBytes: 33554432,
+    internalQueryProhibitBlockingMergeOnMongoS: 0,
+    internalQueryMaxAddToSetBytes: 104857600,
+    internalDocumentSourceSetWindowFieldsMaxMemoryBytes: 104857600,
+    internalQueryFrameworkControl: 'trySbeRestricted',
+    internalQueryPlannerIgnoreIndexWithCollationForRegex: 1
+  },
+  ok: 1,
+  '$clusterTime': {
+    clusterTime: Timestamp({ t: 1793174912, i: 93 }),
+    signature: {
+      hash: Binary.createFromBase64('ha4T+GxCWIMt4pvBQUb0SoRen/g=', 0),
+      keyId: Long('7647247355665711112')
+    }
+  },
+  operationTime: Timestamp({ t: 1793174912, i: 93 })
+}
+Atlas atlas-73fkh6-shard-0 [primary] StudentDB> db.students.aggregate([
+|   {
+|     $group: {
+|       _id: "$courseId",
+|       totalStudents: { $sum: 1 },
+|       averageMarks: { $avg: "$marks" }
+|     }
+|   },
+|   {
+|     $lookup: {
+|       from: "courses",
+|       localField: "_id",
+|       foreignField: "_id",
+|       as: "courseDetails"
+|     }
+|   },
+|   {
+|     $unwind: "$courseDetails"
+|   },
+|   {
+|     $project: {
+|       _id: 0,
+|       courseId: "$_id",
+|       courseName: "$courseDetails.courseName",
+|       totalStudents: 1,
+|       averageMarks: { $round: ["$averageMarks", 2] }
+|     }
+|   },
+|   {
+|     $sort: { courseId: 1 }
+|   }
+| ])
+[
+  {
+    totalStudents: 3,
+    courseId: 'CS101',
+    courseName: 'Computer Science',
+    averageMarks: 85
+  },
+  {
+    totalStudents: 2,
+    courseId: 'DB101',
+    courseName: 'Database Management',
+    averageMarks: 91.5
+  },
+  {
+    totalStudents: 2,
+    courseId: 'NW101',
+    courseName: 'Computer Networks',
+    averageMarks: 85
+  }
+]
+Atlas atlas-73fkh6-shard-0 [primary] StudentDB> use StudentDB
+|
+| // Confirm collections
+| show collections
+|
+| // Check record counts
+| db.students.countDocuments()
+| db.courses.countDocuments()
+|
+| // Check indexes
+| db.courses.getIndexes()
+| db.students.getIndexes()
+|
+| // Show student records
+| db.students.find().pretty()
+|
+| // Show course records
+| db.courses.find().pretty()
+|
+| // Run the final aggregation
+| db.students.aggregate([
+|   {
+|     $group: {
+|       _id: "$courseId",
+|       totalStudents: { $sum: 1 },
+|       averageMarks: { $avg: "$marks" }
+|     }
+|   },
+|   {
+|     $lookup: {
+|       from: "courses",
+|       localField: "_id",
+|       foreignField: "_id",
+|       as: "courseDetails"
+|     }
+|   },
+|   { $unwind: "$courseDetails" },
+|   {
+|     $project: {
+|       _id: 0,
+|       courseId: "$_id",
+|       courseName: "$courseDetails.courseName",
+|       totalStudents: 1,
+|       averageMarks: { $round: ["$averageMarks", 2] }
+|     }
+|   },
+|   { $sort: { courseId: 1 } }
+| ])
+already on db StudentDB
+Atlas atlas-73fkh6-shard-0 [primary] StudentDB>
