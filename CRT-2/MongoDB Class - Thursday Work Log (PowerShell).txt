@@ -123,7 +123,7 @@ Create backup folder on Desktop:
 New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\Desktop\StudentDB-Backup"
 
 Set MongoDB URI as environment variable:
-$env:MONGODB_URI = "mongodb+srv://deepeshonwork_db_user:tGS1jmor1ThcZLxA@cluster0.aak7tqx.mongodb.net/StudentDB?retryWrites=true&w=majority"
+$env:MONGODB_URI = "mongodb+srv://<MONGODB_USERNAME>:<MONGODB_PASSWORD>@cluster0.aak7tqx.mongodb.net/StudentDB?retryWrites=true&w=majority"
 
 Run mongodump — backup StudentDB:
 mongodump --uri="$env:MONGODB_URI" --db=StudentDB --out="$env:USERPROFILE\Desktop\StudentDB-Backup"
