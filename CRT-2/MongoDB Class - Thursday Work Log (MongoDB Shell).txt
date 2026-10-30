@@ -19,7 +19,7 @@ PART 1 — CONNECTION
 
 Connect to Atlas cluster (run in terminal):
 
-mongosh "mongodb+srv://deepeshonwork_db_user:tGS1jmor1ThcZLxA@cluster0.aak7tqx.mongodb.net/StudentDB"
+mongosh "mongodb+srv://<MONGODB_USERNAME>:<MONGODB_PASSWORD>@cluster0.aak7tqx.mongodb.net/StudentDB"
 
 
 ------------------------------------------------------------
