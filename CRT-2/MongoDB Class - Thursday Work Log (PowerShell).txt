@@ -1,7 +1,6 @@
 ============================================================
 MongoDB Class - Thursday Work Log (PowerShell)
 Final Project: Student Management System
-Date: 30 October 2026
 ============================================================
 
 Topics Covered:
