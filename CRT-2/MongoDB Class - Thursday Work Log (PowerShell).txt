@@ -1,0 +1,151 @@
+============================================================
+MongoDB Class - Thursday Work Log (PowerShell)
+Final Project: Student Management System
+Date: 30 October 2026
+============================================================
+
+Topics Covered:
+  - Project setup and Node.js backend initialization
+  - Installing dependencies (express, mongoose, dotenv, cors, nodemon)
+  - API testing using Invoke-RestMethod (GET, POST, PUT, DELETE)
+  - MongoDB backup with mongodump
+  - MongoDB restore with mongorestore
+  - Pushing project to GitHub
+
+
+------------------------------------------------------------
+PART 1 — PROJECT SETUP
+------------------------------------------------------------
+
+Create project directory:
+mkdir Student-Management-System
+cd Student-Management-System
+
+-- Actual output --
+    Directory: E:\
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        10/30/2026   8:34 AM                Student-Management-System
+
+Initialise Node.js project:
+npm init -y
+
+-- Actual output --
+Wrote to E:\Student-Management-System\package.json:
+{
+  "name": "student-management-system",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "type": "commonjs"
+}
+
+Install production dependencies:
+npm install express mongoose dotenv cors
+
+-- Actual output --
+added 86 packages, and audited 87 packages in 19s
+33 packages are looking for funding
+found 0 vulnerabilities
+
+Install dev dependency (nodemon for auto-restart):
+npm install --save-dev nodemon
+
+-- Actual output --
+added 26 packages, and audited 113 packages in 6s
+38 packages are looking for funding
+found 0 vulnerabilities
+
+Create project subdirectories:
+New-Item -ItemType Directory -Force -Path "E:\Student-Management-System\config"
+New-Item -ItemType Directory -Force -Path "E:\Student-Management-System\models"
+New-Item -ItemType Directory -Force -Path "E:\Student-Management-System\routes"
+New-Item -ItemType Directory -Force -Path "E:\Student-Management-System\controllers"
+
+Start server in dev mode (uses nodemon):
+npm run dev
+
+Start server in production mode:
+npm start
+
+
+------------------------------------------------------------
+PART 2 — API TESTING WITH Invoke-RestMethod
+------------------------------------------------------------
+
+GET root — check server is running:
+Invoke-RestMethod -Uri "http://localhost:5000/" -Method GET | ConvertTo-Json
+
+GET all students:
+Invoke-RestMethod -Uri "http://localhost:5000/api/students" -Method GET | ConvertTo-Json -Depth 5
+
+GET single student by ID:
+Invoke-RestMethod -Uri "http://localhost:5000/api/students/101" -Method GET | ConvertTo-Json
+
+POST — Add new student:
+$body = @{ studentId=108; name="Kiran Kumar"; age=21; courseId="CS101"; marks=86 } | ConvertTo-Json
+Invoke-RestMethod -Uri "http://localhost:5000/api/students" -Method POST -Body $body -ContentType "application/json" | ConvertTo-Json
+
+PUT — Update student marks:
+$body = @{ marks=95 } | ConvertTo-Json
+Invoke-RestMethod -Uri "http://localhost:5000/api/students/108" -Method PUT -Body $body -ContentType "application/json" | ConvertTo-Json
+
+DELETE — Remove student:
+Invoke-RestMethod -Uri "http://localhost:5000/api/students/108" -Method DELETE | ConvertTo-Json
+
+GET aggregation report — Course Performance:
+Invoke-RestMethod -Uri "http://localhost:5000/api/students/reports/course-performance" -Method GET | ConvertTo-Json -Depth 5
+
+GET all courses:
+Invoke-RestMethod -Uri "http://localhost:5000/api/courses" -Method GET | ConvertTo-Json -Depth 5
+
+POST — Add new course:
+$body = @{ _id="AI101"; courseName="Artificial Intelligence"; department="Computer Science"; credits=4 } | ConvertTo-Json
+Invoke-RestMethod -Uri "http://localhost:5000/api/courses" -Method POST -Body $body -ContentType "application/json" | ConvertTo-Json
+
+PUT — Update course credits:
+$body = @{ credits=5 } | ConvertTo-Json
+Invoke-RestMethod -Uri "http://localhost:5000/api/courses/CS101" -Method PUT -Body $body -ContentType "application/json" | ConvertTo-Json
+
+DELETE — Remove course:
+Invoke-RestMethod -Uri "http://localhost:5000/api/courses/DS101" -Method DELETE | ConvertTo-Json
+
+
+------------------------------------------------------------
+PART 3 — MONGODB BACKUP AND RESTORE
+------------------------------------------------------------
+
+Create backup folder on Desktop:
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\Desktop\StudentDB-Backup"
+
+Set MongoDB URI as environment variable:
+$env:MONGODB_URI = "mongodb+srv://deepeshonwork_db_user:tGS1jmor1ThcZLxA@cluster0.aak7tqx.mongodb.net/StudentDB?retryWrites=true&w=majority"
+
+Run mongodump — backup StudentDB:
+mongodump --uri="$env:MONGODB_URI" --db=StudentDB --out="$env:USERPROFILE\Desktop\StudentDB-Backup"
+
+Run mongorestore — restore to StudentDB_Restore_Test:
+mongorestore --uri="$env:MONGODB_URI" --nsFrom="StudentDB.*" --nsTo="StudentDB_Restore_Test.*" "$env:USERPROFILE\Desktop\StudentDB-Backup\StudentDB"
+
+Verify backup folder contents:
+Get-ChildItem "$env:USERPROFILE\Desktop\StudentDB-Backup\StudentDB"
+
+
+------------------------------------------------------------
+PART 4 — PUSH TO GITHUB
+------------------------------------------------------------
+
+Navigate to project directory:
+cd "E:\Student-Management-System"
+
+Initialise git and push to GitHub:
+git init
+git add .
+git commit -m "Initial Student Management Backend"
+git branch -M main
+git remote add origin YOUR_GITHUB_REPOSITORY_URL
+git push -u origin main

@@ -1,0 +1,273 @@
+============================================================
+MongoDB Class - Thursday Work Log (MongoDB Shell)
+Final Project: Student Management System
+Date: 30 October 2026
+============================================================
+
+Topics Covered:
+  - Backend application development using MongoDB
+  - CRUD operations on students and courses collections
+  - Designing queries and indexes for optimal performance
+  - Aggregation pipeline for course performance report
+  - Replication (Atlas Replica Set)
+  - Backup and restoration verification
+
+
+------------------------------------------------------------
+PART 1 — CONNECTION
+------------------------------------------------------------
+
+Connect to Atlas cluster (run in terminal):
+
+mongosh "mongodb+srv://deepeshonwork_db_user:tGS1jmor1ThcZLxA@cluster0.aak7tqx.mongodb.net/StudentDB"
+
+
+------------------------------------------------------------
+PART 2 — DATABASE & COLLECTION SETUP
+------------------------------------------------------------
+
+Switch to StudentDB:
+use StudentDB
+
+Create collections:
+db.createCollection("students")
+db.createCollection("courses")
+
+List all collections:
+show collections
+
+Count documents:
+db.students.countDocuments()
+db.courses.countDocuments()
+
+
+------------------------------------------------------------
+PART 3 — CRUD: COURSES COLLECTION
+------------------------------------------------------------
+
+INSERT courses:
+db.courses.insertMany([
+    { _id: "CS101", courseName: "Computer Science",    department: "Computer Applications",  credits: 4 },
+    { _id: "DB101", courseName: "Database Management", department: "Computer Applications",  credits: 3 },
+    { _id: "NW101", courseName: "Computer Networks",   department: "Information Technology", credits: 4 },
+    { _id: "DS101", courseName: "Data Science",        department: "Computer Applications",  credits: 4 }
+])
+
+READ all courses:
+db.courses.find()
+db.courses.find().pretty()
+
+READ one course by ID:
+db.courses.findOne({ _id: "CS101" })
+
+UPDATE course credits:
+db.courses.updateOne(
+    { _id: "CS101" },
+    { $set: { credits: 5 } }
+)
+
+UPSERT — add DS101 if not present:
+db.courses.updateOne(
+    { _id: "DS101" },
+    {
+        $set: {
+            courseName: "Data Science",
+            department: "Computer Applications",
+            credits: 4
+        }
+    },
+    { upsert: true }
+)
+
+DELETE a course:
+db.courses.deleteOne({ _id: "DS101" })
+
+
+------------------------------------------------------------
+PART 4 — CRUD: STUDENTS COLLECTION
+------------------------------------------------------------
+
+INSERT one student:
+db.students.insertOne({
+    studentId: 101,
+    name: "Rahul Sharma",
+    age: 20,
+    courseId: "CS101",
+    marks: 92
+})
+
+INSERT multiple students:
+db.students.insertMany([
+    { studentId: 102, name: "Amit Verma",   age: 21, courseId: "CS101", marks: 80 },
+    { studentId: 103, name: "Priya Singh",  age: 20, courseId: "DB101", marks: 95 },
+    { studentId: 104, name: "Neha Gupta",   age: 22, courseId: "DB101", marks: 88 },
+    { studentId: 105, name: "Arjun Mehta",  age: 21, courseId: "NW101", marks: 75 },
+    { studentId: 106, name: "Sneha Patel",  age: 20, courseId: "NW101", marks: 95 },
+    { studentId: 107, name: "Vikram Joshi", age: 22, courseId: "CS101", marks: 83 }
+])
+
+READ all students sorted by studentId:
+db.students.find().sort({ studentId: 1 })
+db.students.find().pretty()
+
+READ one student:
+db.students.findOne({ studentId: 101 })
+
+READ students in a specific course:
+db.students.find({ courseId: "CS101" })
+
+READ students with marks above 85:
+db.students.find({ marks: { $gt: 85 } })
+
+INSERT one more student (test entry):
+db.students.insertOne({
+    studentId: 108,
+    name: "Kiran Kumar",
+    age: 21,
+    courseId: "DS101",
+    marks: 86
+})
+
+UPDATE — set marks for one student:
+db.students.updateOne(
+    { studentId: 108 },
+    { $set: { marks: 92 } }
+)
+
+UPDATE — add field to multiple students:
+db.students.updateMany(
+    { courseId: "CS101" },
+    { $set: { department: "Computer Science" } }
+)
+
+DELETE one student:
+db.students.deleteOne({ studentId: 108 })
+
+
+------------------------------------------------------------
+PART 5 — INDEXES
+------------------------------------------------------------
+
+Create unique index on studentId:
+db.students.createIndex({ studentId: 1 }, { unique: true })
+
+Create index on courseId for faster lookups:
+db.students.createIndex({ courseId: 1 })
+
+Create unique index on courseName:
+db.courses.createIndex({ courseName: 1 }, { unique: true })
+
+View all indexes on students collection:
+db.students.getIndexes()
+
+View all indexes on courses collection:
+db.courses.getIndexes()
+
+Drop an index:
+db.students.dropIndex("courseId_1")
+
+-- Actual output observed during session --
+db.students.getIndexes()
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { courseId: 1 }, name: 'courseId_1' },
+  { v: 2, key: { studentId: 1 }, name: 'studentId_1', unique: true }
+]
+
+db.courses.getIndexes()
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { courseName: 1 }, name: 'courseName_1', unique: true }
+]
+
+
+------------------------------------------------------------
+PART 6 — AGGREGATION: COURSE PERFORMANCE REPORT
+------------------------------------------------------------
+
+db.students.aggregate([
+    {
+        $group: {
+            _id: "$courseId",
+            totalStudents: { $sum: 1 },
+            averageMarks: { $avg: "$marks" }
+        }
+    },
+    {
+        $lookup: {
+            from: "courses",
+            localField: "_id",
+            foreignField: "_id",
+            as: "course"
+        }
+    },
+    { $unwind: "$course" },
+    {
+        $project: {
+            _id: 0,
+            courseId: "$_id",
+            courseName: "$course.courseName",
+            totalStudents: 1,
+            averageMarks: { $round: ["$averageMarks", 2] }
+        }
+    }
+])
+
+-- Actual output observed during session --
+[
+  { totalStudents: 2, courseId: 'NW101', courseName: 'Computer Networks',   averageMarks: 85   },
+  { totalStudents: 3, courseId: 'CS101', courseName: 'Computer Science',    averageMarks: 85   },
+  { totalStudents: 2, courseId: 'DB101', courseName: 'Database Management', averageMarks: 91.5 }
+]
+
+
+------------------------------------------------------------
+PART 7 — VERIFY BACKUP RESTORATION
+------------------------------------------------------------
+
+Switch to restored database:
+use StudentDB_Restore_Test
+
+Check collections exist:
+show collections
+
+Compare document counts with original:
+db.students.countDocuments()
+db.courses.countDocuments()
+
+Verify data matches original:
+db.students.find().sort({ studentId: 1 })
+db.courses.find()
+
+
+------------------------------------------------------------
+PART 8 — REPLICATION (Atlas Replica Set)
+------------------------------------------------------------
+
+Check replica set status:
+rs.status()
+
+Check primary node info:
+db.adminCommand({ hello: 1 })
+
+View replica set configuration:
+rs.conf()
+
+
+------------------------------------------------------------
+SESSION LOG SNAPSHOT — Databases visible after work
+------------------------------------------------------------
+
+show dbs
+BankingTransaction     288.00 KiB
+MongoDB-S2             160.00 KiB
+StudentDB              184.00 KiB
+StudentDB_Restored      72.00 KiB
+ai_interview_platform  332.00 KiB
+banking                288.00 KiB
+fdportal                 2.32 MiB
+mongodb_index_lab      132.00 KiB
+replication_lab         72.00 KiB
+sample_mflix           141.23 MiB
+admin                         0 B
+local                         0 B
