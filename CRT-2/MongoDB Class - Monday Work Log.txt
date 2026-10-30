@@ -1,4 +1,4 @@
-PS C:\Windows\system32> mongosh "mongodb+srv://deepeshonwork_db_user:tGS1jmor1ThcZLxA@cluster0.aak7tqx.mongodb.net/"
+PS C:\Windows\system32> mongosh "mongodb+srv://<MONGODB_USERNAME>:<MONGODB_PASSWORD>@cluster0.aak7tqx.mongodb.net/"
 Current Mongosh Log ID: ************************
 Connecting to:          mongodb+srv://<credentials>@cluster0.aak7tqx.mongodb.net/?appName=mongosh+2.10.0
 Using MongoDB:          8.0.34
